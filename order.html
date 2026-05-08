@@ -625,9 +625,33 @@
       line-height: 1.6;
     }
 
+    /* ── PHOTO GALLERY ── */
+    .photo-gallery {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-bottom: 14px;
+    }
+
+    .photo-gallery::-webkit-scrollbar { display: none; }
+
+    .photo-gallery img {
+      width: 220px;
+      height: 148px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      border: 1px solid var(--border);
+    }
+
     @media (max-width: 380px) {
       .step-label { display: none; }
       .step-line { width: 14px; }
+      .photo-gallery img { width: 180px; height: 120px; }
     }
   </style>
 </head>
@@ -677,6 +701,15 @@
         <p>這不只是一份食材，更是部落族人對土地的敬意與守候，在每一口濃郁紮實的滋味中，您都能品嚐到高山泉水的甘甜、雲霧的滋潤，以及柴火的溫度。</p>
         <p>我們希望能將這份來自白姑大山腳下、最純淨的高山原味分享給您，若您也嚮往這份「慢熟」的滋味，歡迎訂購，與我們一同分享這份來自部落的溫暖贈禮。</p>
       </div>
+    </div>
+
+    <!-- Photo Gallery -->
+    <div class="photo-gallery">
+      <img src="香菇照片/S__52232206.jpg" alt="椴木栽培環境">
+      <img src="香菇照片/S__52232207.jpg" alt="原木上的香菇">
+      <img src="香菇照片/S__52232205.jpg" alt="新鮮椴木香菇">
+      <img src="香菇照片/S__52232208.jpg" alt="香菇傘褶特寫">
+      <img src="香菇照片/S__52232204.jpg" alt="採收烘乾中的香菇">
     </div>
 
     <!-- Products -->
