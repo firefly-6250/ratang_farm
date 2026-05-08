@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>喇當大叔的果園 — 香菇訂購</title>
+  <title>亞輹恩.喇當的果園 — 香菇訂購</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -359,7 +359,7 @@
     .field-row { display: flex; gap: 8px; align-items: flex-start; }
     .field-row input { flex: 1; }
 
-    input[type=text], input[type=tel], input[type=email], textarea, input[type=number] {
+    input[type=text], input[type=tel], input[type=email], textarea, input[type=number], select {
       width: 100%;
       padding: 11px 13px;
       border: 1.5px solid var(--border);
@@ -636,7 +636,7 @@
 <!-- ── HEADER ── -->
 <div class="header">
   <span class="header-icon">🍄</span>
-  <h1>喇當大叔的果園</h1>
+  <h1>亞輹恩.喇當的果園</h1>
   <p>白姑大山・泰雅部落・椴木香菇</p>
 </div>
 
@@ -812,14 +812,54 @@
     <div class="card">
       <div class="card-title">💳 付款方式</div>
       <div class="payment-box">
-        <h4>銀行轉帳 / 電子支付掃碼</h4>
-        <div class="pay-row"><span class="pk">銀行</span><span class="pv">012 台灣企銀</span></div>
-        <div class="pay-row"><span class="pk">帳號</span><span class="pv">123-456-789-000</span></div>
-        <div class="pay-row"><span class="pk">戶名</span><span class="pv">喇當大叔</span></div>
+        <h4>郵局轉帳 / 電子支付掃碼</h4>
+        <div class="pay-row"><span class="pk">郵局代碼</span><span class="pv">700</span></div>
+        <div class="pay-row"><span class="pk">帳號</span><span class="pv">0401312-0059371</span></div>
+        <div class="pay-row"><span class="pk">戶名</span><span class="pv">亞輹恩.喇當</span></div>
         <div style="margin-top:12px;text-align:center">
           <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">📱 或掃描 QR Code 用電子支付 APP 付款</p>
           <img src="https://i.meee.com.tw/5c5NlYZ.png" alt="電子支付QR Code" style="width:160px;height:160px">
           <p style="font-size:0.72rem;color:var(--muted);margin-top:6px">(700) 0401 3120 0593 71</p>
+        </div>
+      </div>
+      <div style="margin-top:16px;border-top:1px solid #c8e0b0;padding-top:14px">
+        <p style="font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:10px">✏️ 請填寫您的匯款資訊</p>
+        <div class="field-wrap">
+          <label class="field-label">匯款帳號末五碼 <span style="color:red">*</span></label>
+          <input type="tel" id="transferLast5" placeholder="請輸入匯款帳號末 5 碼" inputmode="numeric" maxlength="5">
+          <div class="field-err" id="transferLast5Err"></div>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">匯款銀行 <span style="color:red">*</span></label>
+          <select id="transferBank" style="width:100%;padding:10px 12px;border:1.5px solid #ccc;border-radius:8px;font-size:0.95rem;background:#fff;color:#333">
+            <option value="">請選擇匯款銀行</option>
+            <option value="700 中華郵政">700 中華郵政</option>
+            <option value="004 台灣銀行">004 台灣銀行</option>
+            <option value="005 土地銀行">005 土地銀行</option>
+            <option value="006 合庫銀行">006 合庫銀行</option>
+            <option value="007 第一銀行">007 第一銀行</option>
+            <option value="008 華南銀行">008 華南銀行</option>
+            <option value="009 彰化銀行">009 彰化銀行</option>
+            <option value="011 上海商銀">011 上海商銀</option>
+            <option value="012 台灣企銀">012 台灣企銀</option>
+            <option value="013 國泰世華">013 國泰世華</option>
+            <option value="017 兆豐銀行">017 兆豐銀行</option>
+            <option value="050 臺灣中小企銀">050 臺灣中小企銀</option>
+            <option value="052 渣打銀行">052 渣打銀行</option>
+            <option value="053 台中商銀">053 台中商銀</option>
+            <option value="054 京城銀行">054 京城銀行</option>
+            <option value="103 新光銀行">103 新光銀行</option>
+            <option value="108 陽信銀行">108 陽信銀行</option>
+            <option value="803 聯邦銀行">803 聯邦銀行</option>
+            <option value="805 遠東銀行">805 遠東銀行</option>
+            <option value="806 元大銀行">806 元大銀行</option>
+            <option value="807 永豐銀行">807 永豐銀行</option>
+            <option value="808 玉山銀行">808 玉山銀行</option>
+            <option value="809 凱基銀行">809 凱基銀行</option>
+            <option value="812 台新銀行">812 台新銀行</option>
+            <option value="822 中國信託">822 中國信託</option>
+          </select>
+          <div class="field-err" id="transferBankErr"></div>
         </div>
       </div>
       <p style="font-size:0.8rem;color:var(--muted);line-height:1.6;margin-top:8px">
@@ -856,11 +896,13 @@
     <div class="card">
       <div class="card-title">💳 匯款提醒</div>
       <div class="payment-box">
-        <h4>銀行轉帳 / 電子支付掃碼</h4>
-        <div class="pay-row"><span class="pk">銀行</span><span class="pv">012 台灣企銀</span></div>
-        <div class="pay-row"><span class="pk">帳號</span><span class="pv">123-456-789-000</span></div>
-        <div class="pay-row"><span class="pk">戶名</span><span class="pv">喇當大叔</span></div>
+        <h4>郵局轉帳 / 電子支付掃碼</h4>
+        <div class="pay-row"><span class="pk">郵局代碼</span><span class="pv">700</span></div>
+        <div class="pay-row"><span class="pk">帳號</span><span class="pv">0401312-0059371</span></div>
+        <div class="pay-row"><span class="pk">戶名</span><span class="pv">亞輹恩.喇當</span></div>
         <div class="pay-row" style="margin-top:6px"><span class="pk">金額</span><span class="pv" style="color:var(--accent)">NT$ <span id="successTotal">0</span></span></div>
+        <div class="pay-row"><span class="pk">匯款末五碼</span><span class="pv" id="successLast5">—</span></div>
+        <div class="pay-row"><span class="pk">匯款銀行</span><span class="pv" id="successBank">—</span></div>
         <div style="margin-top:12px;text-align:center">
           <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">📱 或掃描 QR Code 用電子支付 APP 付款</p>
           <img src="https://i.meee.com.tw/5c5NlYZ.png" alt="電子支付QR Code" style="width:160px;height:160px">
@@ -1117,7 +1159,7 @@ function showErr(id, msg) {
 
 function clearErrors() {
   document.querySelectorAll('.field-err').forEach(el => el.textContent = '');
-  document.querySelectorAll('input.err, textarea.err').forEach(el => el.classList.remove('err'));
+  document.querySelectorAll('input.err, textarea.err, select.err').forEach(el => el.classList.remove('err'));
 }
 
 // ────────────────────────────────────────
@@ -1129,6 +1171,8 @@ function renderConfirm() {
   const name    = document.getElementById('buyerName').value.trim();
   const email   = document.getElementById('email').value.trim();
   const address = document.getElementById('address').value.trim();
+  const transferLast5 = document.getElementById('transferLast5').value.trim();
+  const transferBank  = document.getElementById('transferBank').value;
   const note    = document.getElementById('note').value.trim();
   const recName = document.getElementById('recipientName').value.trim();
   const recPhone= document.getElementById('recipientPhone').value.trim();
@@ -1184,10 +1228,18 @@ async function submitOrder() {
   const name    = document.getElementById('buyerName').value.trim();
   const email   = document.getElementById('email').value.trim();
   const address = document.getElementById('address').value.trim();
+  const transferLast5 = document.getElementById('transferLast5').value.trim();
+  const transferBank  = document.getElementById('transferBank').value;
   const note    = document.getElementById('note').value.trim();
   const recName = document.getElementById('recipientName').value.trim();
   const recPhone= document.getElementById('recipientPhone').value.trim();
 
+  if (!transferLast5 || !/^\d{5}$/.test(transferLast5)) {
+    alert('請填寫正確的匯款帳號末五碼（5 位數字）'); btn.disabled = false; btn.textContent = '✅ 確認送出訂單'; return;
+  }
+  if (!transferBank) {
+    alert('請選擇匯款銀行'); btn.disabled = false; btn.textContent = '✅ 確認送出訂單'; return;
+  }
   let total = 0;
   const items = Object.entries(cart).map(([id, qty]) => {
     const p = products.find(x => x.id === id);
@@ -1200,6 +1252,7 @@ async function submitOrder() {
     buyerName: name, phone, email,
     isGift, recipientName: recName, recipientPhone: recPhone,
     address, note, items, total,
+    transferLast5, transferBank,
     orderTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
   };
 
@@ -1214,6 +1267,8 @@ async function submitOrder() {
     if (data.success) {
       document.getElementById('successOrderId').textContent = data.orderId;
       document.getElementById('successTotal').textContent = total.toLocaleString();
+      document.getElementById('successLast5').textContent = transferLast5;
+      document.getElementById('successBank').textContent = transferBank;
       showPage(4);
     } else {
       throw new Error(data.message || '未知錯誤');
