@@ -217,63 +217,69 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── PRODUCT ITEM ── */
-    .product-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 0;
+    /* ── PRODUCT GROUP ── */
+    .product-group {
+      padding: 14px 0;
       border-bottom: 1px solid #f0e8d0;
     }
 
-    .product-item:last-child { border-bottom: none; }
+    .product-group:last-child { border-bottom: none; }
 
-    .product-img {
-      width: 58px; height: 58px;
+    .product-group-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .product-group-img {
+      width: 90px; height: 90px;
       border-radius: 10px;
       object-fit: cover;
       flex-shrink: 0;
       border: 1px solid var(--border);
     }
 
-    .product-img-placeholder {
-      width: 58px; height: 58px;
+    .product-group-img-placeholder {
+      width: 90px; height: 90px;
       border-radius: 10px;
       background: var(--tag-bg);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.9rem;
+      font-size: 2.4rem;
       flex-shrink: 0;
     }
 
-    .product-info { flex: 1; min-width: 0; }
-
-    .product-name {
-      font-weight: 600;
-      font-size: 0.92rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .product-group-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
     }
 
-    .product-weight {
+    .product-group-desc {
       font-size: 0.76rem;
       color: var(--muted);
-      margin-top: 1px;
+      margin-top: 5px;
+      line-height: 1.5;
     }
 
-    .product-desc {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 2px;
-      line-height: 1.4;
-      white-space: normal;
+    .product-variant {
+      display: flex;
+      align-items: center;
+      padding: 7px 0;
+      border-top: 1px dashed #f0e8d0;
     }
 
-    .product-price {
+    .variant-unit {
+      flex: 1;
       font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .variant-price {
+      font-size: 0.9rem;
       color: var(--primary);
       font-weight: 700;
-      margin-top: 3px;
+      margin-right: 12px;
     }
 
     /* ── QTY CONTROL ── */
@@ -817,7 +823,7 @@
       </div>
     </div>
 
-    <button class="btn-primary" onclick="goToStep3()">下一步：確認訂單 →</button>
+    <button class="btn-primary" onclick="goToStep3()">下一步：結帳匯款 →</button>
     <button class="btn-back" onclick="goBack(1)">← 返回修改商品</button>
   </div>
 </div>
@@ -1080,27 +1086,44 @@ function renderProducts() {
     return;
   }
 
-  container.innerHTML = products.map(p => {
-    const qty = cart[p.id] || 0;
-    const priceText = Number(p.price) > 0 ? 'NT$ ' + Number(p.price).toLocaleString() : '洽詢';
-    const imgHtml = p.picture
-      ? `<img class="product-img" src="${p.picture}" alt="${p.name}" onerror="this.parentNode.innerHTML='<div class=product-img-placeholder>🍄</div>'">`
-      : `<div class="product-img-placeholder">🍄</div>`;
+  // 按名稱分組，保留原始順序
+  const groupMap = new Map();
+  products.forEach(p => {
+    if (!groupMap.has(p.name)) groupMap.set(p.name, []);
+    groupMap.get(p.name).push(p);
+  });
+
+  container.innerHTML = [...groupMap.entries()].map(([name, items]) => {
+    const first = items[0];
+    const imgHtml = first.picture
+      ? `<img class="product-group-img" src="${first.picture}" alt="${name}" onerror="this.parentNode.innerHTML='<div class=product-group-img-placeholder>🍄</div>'">`
+      : `<div class="product-group-img-placeholder">🍄</div>`;
+
+    const variantsHtml = items.map(p => {
+      const qty = cart[p.id] || 0;
+      const priceText = Number(p.price) > 0 ? 'NT$ ' + Number(p.price).toLocaleString() : '洽詢';
+      return `
+        <div class="product-variant">
+          <span class="variant-unit">${p.unit}</span>
+          <span class="variant-price">${priceText}</span>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('${p.id}',-1)" id="btn-minus-${p.id}" ${qty===0?'disabled':''}>－</button>
+            <span class="qty-num" id="qty-${p.id}">${qty}</span>
+            <button class="qty-btn" onclick="changeQty('${p.id}',1)" id="btn-plus-${p.id}">＋</button>
+          </div>
+        </div>`;
+    }).join('');
 
     return `
-      <div class="product-item" id="pi-${p.id}">
-        ${imgHtml}
-        <div class="product-info">
-          <div class="product-name">${p.name}</div>
-          <div class="product-weight">${p.unit}</div>
-          ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
-          <div class="product-price">${priceText}</div>
+      <div class="product-group">
+        <div class="product-group-header">
+          ${imgHtml}
+          <div>
+            <div class="product-group-name">${name}</div>
+            ${first.description ? `<div class="product-group-desc">${first.description}</div>` : ''}
+          </div>
         </div>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty('${p.id}',-1)" id="btn-minus-${p.id}" ${qty===0?'disabled':''}>－</button>
-          <span class="qty-num" id="qty-${p.id}">${qty}</span>
-          <button class="qty-btn" onclick="changeQty('${p.id}',1)" id="btn-plus-${p.id}">＋</button>
-        </div>
+        ${variantsHtml}
       </div>`;
   }).join('');
 }
