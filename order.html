@@ -261,6 +261,14 @@
       margin-top: 1px;
     }
 
+    .product-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4;
+      white-space: normal;
+    }
+
     .product-price {
       font-size: 0.85rem;
       color: var(--primary);
@@ -707,6 +715,8 @@
     <div class="photo-gallery">
       <img src="香菇照片/S__52232208.jpg" alt="香菇傘褶特寫">
       <img src="香菇照片/S__52232205.jpg" alt="新鮮椴木香菇">
+      <img src="香菇照片/S__52232204.jpg" alt="新鮮椴木香菇">
+      <img src="香菇照片/S__52232206.jpg" alt="新鮮椴木香菇">
       <img src="香菇照片/S__52232207.jpg" alt="原木上的香菇">
     </div>
 
@@ -1083,6 +1093,7 @@ function renderProducts() {
         <div class="product-info">
           <div class="product-name">${p.name}</div>
           <div class="product-weight">${p.unit}</div>
+          ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
           <div class="product-price">${priceText}</div>
         </div>
         <div class="qty-control">
