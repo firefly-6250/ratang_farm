@@ -13,9 +13,9 @@
 //   存取權限：任何人
 // ════════════════════════════════════════════════════
 
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';   // ← 換成你的試算表 ID
+const SPREADSHEET_ID = '13s8MhC6LmZSA0Brbal7bigI_n4QaJuqWMiSg6BfL1kk';   // ← 換成你的試算表 ID
 const ORDER_SHEET    = '訂單';
-const CUSTOMER_SHEET = '客戶';
+const CUSTOMER_SHEET = '老客戶';
 
 // ────────────────────────────────────────
 // doGet：老客戶查詢
