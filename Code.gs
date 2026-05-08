@@ -92,6 +92,8 @@ function doPost(e) {
       payload.note || '',
       itemStr,
       payload.total,
+      payload.transferLast5 || '',
+      payload.transferBank  || '',
       '待匯款'  // 初始付款狀態
     ]);
 
