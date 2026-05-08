@@ -864,31 +864,51 @@
           <label class="field-label">匯款銀行 <span style="color:red">*</span></label>
           <select id="transferBank" style="width:100%;padding:10px 12px;border:1.5px solid #ccc;border-radius:8px;font-size:0.95rem;background:#fff;color:#333">
             <option value="">請選擇匯款銀行</option>
-            <option value="700 中華郵政">700 中華郵政</option>
-            <option value="004 台灣銀行">004 台灣銀行</option>
+            <option value="004 臺灣銀行">004 臺灣銀行</option>
             <option value="005 土地銀行">005 土地銀行</option>
-            <option value="006 合庫銀行">006 合庫銀行</option>
+            <option value="006 合庫商銀">006 合庫商銀</option>
             <option value="007 第一銀行">007 第一銀行</option>
             <option value="008 華南銀行">008 華南銀行</option>
             <option value="009 彰化銀行">009 彰化銀行</option>
-            <option value="011 上海商銀">011 上海商銀</option>
-            <option value="012 台灣企銀">012 台灣企銀</option>
+            <option value="011 上海銀行">011 上海銀行</option>
+            <option value="012 台北富邦">012 台北富邦</option>
             <option value="013 國泰世華">013 國泰世華</option>
-            <option value="017 兆豐銀行">017 兆豐銀行</option>
-            <option value="050 臺灣中小企銀">050 臺灣中小企銀</option>
-            <option value="052 渣打銀行">052 渣打銀行</option>
-            <option value="053 台中商銀">053 台中商銀</option>
-            <option value="054 京城銀行">054 京城銀行</option>
-            <option value="103 新光銀行">103 新光銀行</option>
-            <option value="108 陽信銀行">108 陽信銀行</option>
+            <option value="015 輸出入銀行">015 輸出入銀行</option>
+            <option value="016 高雄銀行">016 高雄銀行</option>
+            <option value="017 兆豐商銀">017 兆豐商銀</option>
+            <option value="021 花旗(台灣)商業銀行">021 花旗(台灣)商業銀行</option>
+            <option value="048 王道銀行">048 王道銀行</option>
+            <option value="050 臺灣企銀">050 臺灣企銀</option>
+            <option value="052 渣打商銀">052 渣打商銀</option>
+            <option value="053 台中銀行">053 台中銀行</option>
+            <option value="054 京城商銀">054 京城商銀</option>
+            <option value="081 滙豐(台灣)商業銀行">081 滙豐(台灣)商業銀行</option>
+            <option value="101 瑞興商業銀行">101 瑞興商業銀行</option>
+            <option value="102 華泰商業銀行">102 華泰商業銀行</option>
+            <option value="103 臺灣新光銀">103 臺灣新光銀</option>
+            <option value="108 陽信商業銀行">108 陽信商業銀行</option>
+            <option value="118 板信商業銀行">118 板信商業銀行</option>
+            <option value="147 三信銀行">147 三信銀行</option>
+            <option value="389 全支付">389 全支付</option>
+            <option value="390 悠遊卡">390 悠遊卡</option>
+            <option value="391 一卡通">391 一卡通</option>
+            <option value="392 愛金卡">392 愛金卡</option>
+            <option value="396 街口支付">396 街口支付</option>
+            <option value="700 中華郵政">700 中華郵政</option>
             <option value="803 聯邦銀行">803 聯邦銀行</option>
             <option value="805 遠東銀行">805 遠東銀行</option>
             <option value="806 元大銀行">806 元大銀行</option>
             <option value="807 永豐銀行">807 永豐銀行</option>
             <option value="808 玉山銀行">808 玉山銀行</option>
             <option value="809 凱基銀行">809 凱基銀行</option>
+            <option value="810 星展(台灣)商業銀行">810 星展(台灣)商業銀行</option>
             <option value="812 台新銀行">812 台新銀行</option>
+            <option value="816 安泰商業銀行">816 安泰商業銀行</option>
             <option value="822 中國信託">822 中國信託</option>
+            <option value="823 將來銀行">823 將來銀行</option>
+            <option value="824 連線銀行">824 連線銀行</option>
+            <option value="826 樂天國際商業銀行">826 樂天國際商業銀行</option>
+            <option value="其他">其他(未在上述列表)</option>
           </select>
           <div class="field-err" id="transferBankErr"></div>
         </div>
@@ -956,7 +976,7 @@
 // 設定區：請依實際情況修改
 // ────────────────────────────────────────
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUHwWlvedxxVM-EyoYesMeE1WQkPhPpvVpdtV-T00USZpGl2Vr_5Ve6CTZjQCWBd1rjRYPFlECydpq/pub?gid=0&single=true&output=csv';
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw0otud1SD3ayNgUlgVVKUUg5Mk2800PCrmXUl6oeTylLLdEhJ4w2B9TpfjWX-ntiSv2A/exec';  // ← 換成你的 GAS 部署網址
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwaO4ZC2eFX4GAn9Pw6iyuA4BBzrfyGwCF9yGCV-D2ztJ3PyIUZB7Qnhxw6cCrMZlnSVA/exec';  // ← 換成你的 GAS 部署網址
 
 // ────────────────────────────────────────
 // 狀態
