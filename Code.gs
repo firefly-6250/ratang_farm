@@ -79,7 +79,7 @@ function doPost(e) {
       .join(', ');
 
     // 訂單工作表欄位順序
-    orderSheet.appendRow([
+    const rowData = [
       orderId,
       payload.orderTime || new Date().toLocaleString('zh-TW'),
       payload.buyerName,
@@ -95,7 +95,14 @@ function doPost(e) {
       payload.transferLast5 || '',
       payload.transferBank  || '',
       '待匯款'  // 初始付款狀態
-    ]);
+    ];
+
+    // 先把會有前導零的欄位格式設為文字，再寫入，避免 Sheets 自動轉數字
+    const nextRow = orderSheet.getLastRow() + 1;
+    orderSheet.getRange(nextRow, 4).setNumberFormat('@');   // 電話
+    orderSheet.getRange(nextRow, 8).setNumberFormat('@');   // 收件人電話
+    orderSheet.getRange(nextRow, 13).setNumberFormat('@');  // 匯款末五碼
+    orderSheet.getRange(nextRow, 1, 1, rowData.length).setValues([rowData]);
 
     // ── 更新或新增客戶資料 ──
     updateCustomer(ss, {
