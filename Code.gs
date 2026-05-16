@@ -16,6 +16,7 @@
 const SPREADSHEET_ID = '13s8MhC6LmZSA0Brbal7bigI_n4QaJuqWMiSg6BfL1kk';   // ← 換成你的試算表 ID
 const ORDER_SHEET    = '訂單';
 const CUSTOMER_SHEET = '老客戶';
+const GROCERY_SHEET = '香菇品項';
 
 // ────────────────────────────────────────
 // doGet：老客戶查詢
