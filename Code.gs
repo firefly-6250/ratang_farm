@@ -105,6 +105,9 @@ function doPost(e) {
     orderSheet.getRange(nextRow, 13).setNumberFormat('@');  // 匯款末五碼
     orderSheet.getRange(nextRow, 1, 1, rowData.length).setValues([rowData]);
 
+    // ── 扣減商品庫存 ──
+    deductInventory(ss, payload.items);
+
     // ── 更新或新增客戶資料 ──
     updateCustomer(ss, {
       phone:   payload.phone,
@@ -121,6 +124,33 @@ function doPost(e) {
 
   } finally {
     lock.releaseLock();
+  }
+}
+
+// ────────────────────────────────────────
+// 扣減庫存：依 id 找到 GROCERY_SHEET 對應列，E欄減去訂購數量（最低為 0）
+// ────────────────────────────────────────
+function deductInventory(ss, items) {
+  const sheet = ss.getSheetByName(GROCERY_SHEET);
+  if (!sheet) return;
+
+  const data = sheet.getDataRange().getValues();
+
+  // 建立 id → 列號（1-based）的對照表
+  const idToRow = {};
+  for (let i = 1; i < data.length; i++) {
+    const id = String(data[i][0]).trim();
+    if (id) idToRow[id] = i + 1;
+  }
+
+  for (const item of items) {
+    const rowNum = idToRow[String(item.id).trim()];
+    if (!rowNum) continue;
+
+    const current = Number(data[rowNum - 1][4]); // E欄（index 4）
+    if (isNaN(current)) continue;
+
+    sheet.getRange(rowNum, 5).setValue(Math.max(0, current - item.qty));
   }
 }
 
