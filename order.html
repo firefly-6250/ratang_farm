@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;background-image:radial-gradient(rgba(31,20,7,.035) 1px,transparent 1.2px),radial-gradient(rgba(31,20,7,.025) 1px,transparent 1px);background-size:4px 4px,7px 7px;background-position:0 0,2px 3px}
 .stage{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(31,20,7,.08)}
-@media(min-width:600px){body{padding:24px 0}.stage{border-radius:28px;min-height:calc(100vh - 48px);border:1px solid var(--line)}.gallery{flex-wrap:wrap;overflow-x:visible;scroll-snap-type:none;justify-content:center}.gallery figure{flex:1 1 150px;max-width:280px;width:auto;height:auto}.gallery img{height:auto;object-fit:cover}}
+@media(min-width:600px){body{padding:24px 0}.stage{border-radius:28px;min-height:calc(100vh - 48px);border:1px solid var(--line)}.gallery-btn{display:grid;place-items:center}}
 .hero{position:relative;height:460px;overflow:hidden;color:#fff;isolation:isolate}
 .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.95) contrast(1.05);z-index:0}
 .hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,12,4,.55) 0%,rgba(20,12,4,.05) 35%,rgba(20,12,4,0) 50%,rgba(20,12,4,.55) 88%,rgba(20,12,4,.85) 100%)}
@@ -51,6 +51,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink)
 .gallery img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .gallery figure:hover img{transform:scale(1.04)}
 .gallery figcaption{position:absolute;left:12px;bottom:10px;color:#fff;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:1.5px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.gallery-outer{position:relative}
+.gallery-btn{display:none;position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(31,20,7,.55);color:#fff;border:none;cursor:pointer;z-index:5;font-size:28px;line-height:1;transition:background .18s;backdrop-filter:blur(6px)}
+.gallery-btn:hover{background:rgba(31,20,7,.82)}
+.gallery-btn:disabled{opacity:.2;cursor:default}
+.gallery-btn.gprev{left:6px}
+.gallery-btn.gnext{right:6px}
 .products{padding:14px 20px 130px}
 .products-head{padding:8px 2px 18px;display:flex;align-items:baseline;justify-content:space-between}
 .products-head h3{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;letter-spacing:3px;color:var(--ink)}
@@ -227,12 +233,16 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 
 <section class="gallery-wrap">
   <div class="gallery-head"><h3>山中時刻</h3><span class="sub">From the forest floor</span></div>
-  <div class="gallery">
-    <figure><img src="香菇照片/S__52232208.jpg" alt=""><figcaption>菌褶 · 雪白如紙</figcaption></figure>
-    <figure><img src="香菇照片/S__52232205.jpg" alt=""><figcaption>剛摘下</figcaption></figure>
-    <figure><img src="香菇照片/S__52232207.jpg" alt=""><figcaption>原木栽培</figcaption></figure>
-    <figure><img src="香菇照片/S__52232206.jpg" alt=""><figcaption>椴木排列</figcaption></figure>
-    <figure><img src="香菇照片/S__52232204.jpg" alt=""><figcaption>採收烘乾</figcaption></figure>
+  <div class="gallery-outer">
+    <button class="gallery-btn gprev" id="galleryPrev" onclick="galleryNav(-1)" disabled>&#8249;</button>
+    <div class="gallery" id="galleryTrack">
+      <figure><img src="香菇照片/S__52232208.jpg" alt=""><figcaption>菌褶 · 雪白如紙</figcaption></figure>
+      <figure><img src="香菇照片/S__52232205.jpg" alt=""><figcaption>剛摘下</figcaption></figure>
+      <figure><img src="香菇照片/S__52232207.jpg" alt=""><figcaption>原木栽培</figcaption></figure>
+      <figure><img src="香菇照片/S__52232206.jpg" alt=""><figcaption>椴木排列</figcaption></figure>
+      <figure><img src="香菇照片/S__52232204.jpg" alt=""><figcaption>採收烘乾</figcaption></figure>
+    </div>
+    <button class="gallery-btn gnext" id="galleryNext" onclick="galleryNav(1)">&#8250;</button>
   </div>
 </section>
 
@@ -241,7 +251,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
   <div id="productList"><div class="loading"><span class="spinner"></span>載入商品中…</div></div>
 </section>
 
-<div class="footer"><div>喇當大叔的果園 · 紅香部落</div><div class="en">Ratang Farm · Atayal · Nantou</div></div>
+<div class="footer"><div>喇當大叔的果園 · 紅香部落椴木香菇</div><div class="en">Ratang Farm · Atayal · Nantou</div></div>
 </div>
 
 <!-- ══ PAGE 2：填寫資料 ══ -->
@@ -706,6 +716,22 @@ document.addEventListener('click', e => {
   }
 });
 
+function galleryNav(dir) {
+  const track = document.getElementById('galleryTrack');
+  const fig = track.querySelector('figure');
+  track.scrollBy({ left: dir * ((fig ? fig.offsetWidth : 230) + 10), behavior: 'smooth' });
+  setTimeout(updateGalleryBtns, 420);
+}
+function updateGalleryBtns() {
+  const track = document.getElementById('galleryTrack');
+  if (!track) return;
+  const prev = document.getElementById('galleryPrev');
+  const next = document.getElementById('galleryNext');
+  if (prev) prev.disabled = track.scrollLeft <= 1;
+  if (next) next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+}
+document.getElementById('galleryTrack').addEventListener('scroll', updateGalleryBtns);
+updateGalleryBtns();
 loadProducts();
 </script>
 </div>
