@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;background-image:radial-gradient(rgba(31,20,7,.035) 1px,transparent 1.2px),radial-gradient(rgba(31,20,7,.025) 1px,transparent 1px);background-size:4px 4px,7px 7px;background-position:0 0,2px 3px}
 .stage{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(31,20,7,.08)}
-@media(min-width:600px){body{padding:24px 0}.stage{border-radius:28px;min-height:calc(100vh - 48px);border:1px solid var(--line)}}
+@media(min-width:600px){body{padding:24px 0}.stage{border-radius:28px;min-height:calc(100vh - 48px);border:1px solid var(--line)}.gallery{flex-wrap:wrap;overflow-x:visible;scroll-snap-type:none;justify-content:center}.gallery figure{flex:1 1 150px;max-width:280px;width:auto;height:auto}.gallery img{height:auto;object-fit:cover}}
 .hero{position:relative;height:460px;overflow:hidden;color:#fff;isolation:isolate}
 .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.95) contrast(1.05);z-index:0}
 .hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,12,4,.55) 0%,rgba(20,12,4,.05) 35%,rgba(20,12,4,0) 50%,rgba(20,12,4,.55) 88%,rgba(20,12,4,.85) 100%)}
@@ -47,10 +47,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink)
 .gallery{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 22px;scrollbar-width:none}
 .gallery::-webkit-scrollbar{display:none}
 .gallery figure{flex:0 0 auto;scroll-snap-align:start;position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-soft);width:230px;height:290px}
-.gallery figure:nth-child(2){width:170px}
-.gallery figure:nth-child(3){width:200px}
-.gallery figure:nth-child(4){width:180px}
-.gallery figure:nth-child(5){width:210px}
+@media(max-width:599px){.gallery figure:nth-child(2){width:170px}.gallery figure:nth-child(3){width:200px}.gallery figure:nth-child(4){width:180px}.gallery figure:nth-child(5){width:210px}}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .gallery figure:hover img{transform:scale(1.04)}
 .gallery figcaption{position:absolute;left:12px;bottom:10px;color:#fff;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:1.5px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
@@ -284,7 +281,11 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="page" id="page-3">
 <div class="nav-bar"><button class="nav-back" onclick="goBack(2)">←</button><div class="nav-title">確認訂單</div><span class="nav-step">03 / 03</span></div>
 <div class="form-wrap">
-  <div class="notice">⚠️ 請確認以下資料正確後再送出。送出後若需修改，請來電聯絡我們。</div>
+    <div class="notice">
+        ⚠️ 請確認以下資料正確後再送出。送出後若需修改，請來電聯絡我們。<br>
+        商品售出後恕不退還。若因天候影響，請拍照錄影私訊，確認後，皆扣除運費後按比例退款。<br>
+        因農產品會因氣候生長不穩定，若遇到售完，會改預購!!!!(最晚30天內出貨，不介意再下訂)
+    </div>
 
   <div class="form-card">
     <div class="form-card-title">您的訂購</div>
@@ -303,7 +304,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
       <div class="pay-row"><span class="pk">戶名</span><span class="pv">亞輹恩.喇當</span></div>
       <div class="qr-wrap">
         <img src="https://i.meee.com.tw/5c5NlYZ.png" alt="電子支付QR Code">
-        <div class="pay-row">TWQR電子支付轉帳</div>
+        <div class="num">TWQR電子支付轉帳</div>
       </div>
     </div>
     <div style="padding-top:18px">
@@ -360,7 +361,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
         <div class="field-err" id="transferBankErr"></div>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:4px;padding-bottom:16px">📌 請於訂購後 <strong>3 天內</strong>完成付款，並截圖付款明細回傳給我們確認。</p>
+    <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:4px;padding-bottom:16px">📌 付款完成後將會收到Email通知。</p>
   </div>
 
   <button class="btn-primary" id="btnSubmit" onclick="submitOrder()">確認送出訂單</button>
