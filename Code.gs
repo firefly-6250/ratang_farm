@@ -99,10 +99,11 @@ function doPost(e) {
     ];
 
     // 先把會有前導零的欄位格式設為文字，再寫入，避免 Sheets 自動轉數字
+    // clearDataValidations() 先移除可能存在的驗證規則，否則 setNumberFormat 會拋錯
     const nextRow = orderSheet.getLastRow() + 1;
-    orderSheet.getRange(nextRow, 4).setNumberFormat('@');   // 電話
-    orderSheet.getRange(nextRow, 8).setNumberFormat('@');   // 收件人電話
-    orderSheet.getRange(nextRow, 13).setNumberFormat('@');  // 匯款末五碼
+    orderSheet.getRange(nextRow, 4).clearDataValidations().setNumberFormat('@');   // 電話
+    orderSheet.getRange(nextRow, 8).clearDataValidations().setNumberFormat('@');   // 收件人電話
+    orderSheet.getRange(nextRow, 13).clearDataValidations().setNumberFormat('@');  // 匯款末五碼
     orderSheet.getRange(nextRow, 1, 1, rowData.length).setValues([rowData]);
 
     // ── 扣減商品庫存 ──
