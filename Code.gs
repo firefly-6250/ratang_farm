@@ -99,11 +99,14 @@ function doPost(e) {
     ];
 
     const nextRow = orderSheet.getLastRow() + 1;
-    // 嘗試把前導零欄位設為文字格式；若工作表有保護或驗證規則擋住就略過，不影響寫入
-    [4, 8, 13].forEach(col => {
-      try { orderSheet.getRange(nextRow, col).clearDataValidations().setNumberFormat('@'); } catch(e) {}
-    });
     orderSheet.getRange(nextRow, 1, 1, rowData.length).setValues([rowData]);
+
+    // 此工作表的「輸入欄」無法用 setNumberFormat 設格式；
+    // 改寫 ="value" 公式讓 Sheets 以文字儲存，保留電話前導零
+    const asText = v => `="${String(v || '').replace(/"/g, '""')}"`;
+    orderSheet.getRange(nextRow, 4).setFormula(asText(payload.phone));
+    orderSheet.getRange(nextRow, 8).setFormula(asText(payload.recipientPhone || ''));
+    orderSheet.getRange(nextRow, 13).setFormula(asText(payload.transferLast5 || ''));
 
     // ── 扣減商品庫存 ──
     deductInventory(ss, payload.items);
@@ -174,19 +177,6 @@ function updateCustomer(ss, customer) {
 
   // 新增客戶
   sheet.appendRow([customer.phone, customer.name, customer.email, customer.address]);
-}
-
-// ────────────────────────────────────────
-// 一次性設定：把電話、收件人電話、帳號末五碼三欄設為文字格式
-// 在 Apps Script 編輯器手動執行一次即可，之後 doPost 不需再設格式
-// ────────────────────────────────────────
-function setupSheet() {
-  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(ORDER_SHEET);
-  sheet.getRange('D:D').setNumberFormat('@');  // 電話
-  sheet.getRange('H:H').setNumberFormat('@');  // 收件人電話
-  sheet.getRange('M:M').setNumberFormat('@');  // 帳號末五碼
-  SpreadsheetApp.flush();
-  Logger.log('setupSheet 完成');
 }
 
 // ────────────────────────────────────────
