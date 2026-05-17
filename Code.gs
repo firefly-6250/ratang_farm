@@ -14,7 +14,7 @@
 // ════════════════════════════════════════════════════
 
 const SPREADSHEET_ID = '13s8MhC6LmZSA0Brbal7bigI_n4QaJuqWMiSg6BfL1kk';   // ← 換成你的試算表 ID
-const ORDER_SHEET    = '訂單';
+const ORDER_SHEET = '訂單';
 const CUSTOMER_SHEET = '老客戶';
 const GROCERY_SHEET = '香菇品項';
 
@@ -30,16 +30,16 @@ function doGet(e) {
     if (!phone) return jsonResp({ success: false, message: '未提供電話' });
 
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(CUSTOMER_SHEET);
-    const data  = sheet.getDataRange().getValues();
+    const data = sheet.getDataRange().getValues();
     // 客戶工作表欄位：電話 | 姓名 | Email | 地址
     for (let i = 1; i < data.length; i++) {
       if (String(data[i][0]).trim() === phone) {
         return jsonResp({
           success: true,
           customer: {
-            phone:   data[i][0],
-            name:    data[i][1],
-            email:   data[i][2],
+            phone: data[i][0],
+            name: data[i][1],
+            email: data[i][2],
             address: data[i][3]
           }
         });
@@ -63,9 +63,9 @@ function doPost(e) {
     const payload = JSON.parse(e.postData.contents);
 
     // ── 後端驗證 ──
-    if (!payload.phone)    return jsonResp({ success: false, message: '缺少電話' });
+    if (!payload.phone) return jsonResp({ success: false, message: '缺少電話' });
     if (!payload.buyerName) return jsonResp({ success: false, message: '缺少姓名' });
-    if (!payload.address)  return jsonResp({ success: false, message: '缺少地址' });
+    if (!payload.address) return jsonResp({ success: false, message: '缺少地址' });
     if (!payload.items || !payload.items.length) return jsonResp({ success: false, message: '無訂購品項' });
 
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -87,14 +87,14 @@ function doPost(e) {
       payload.phone,
       payload.email || '',
       payload.isGift ? '是' : '否',
-      payload.recipientName  || '',
+      payload.recipientName || '',
       payload.recipientPhone || '',
       payload.address,
       payload.note || '',
       itemStr,
       payload.total,
       payload.transferLast5 || '',
-      payload.transferBank  || '',
+      payload.transferBank || '',
       '待匯款'  // 初始付款狀態
     ];
 
@@ -119,11 +119,24 @@ function doPost(e) {
 
     // ── 更新或新增客戶資料 ──
     updateCustomer(ss, {
-      phone:   payload.phone,
-      name:    payload.buyerName,
-      email:   payload.email || '',
+      phone: payload.phone,
+      name: payload.buyerName,
+      email: payload.email || '',
       address: payload.address
     });
+
+    //發通知信件
+    // 1. 檢查 Email 格式是否正確
+    if (IsValidEmail(payload.email)) {
+      // 格式正確，發送 HTML 信件
+      sendOrderEmail_HTML(payload.email, orderId);
+    }
+    else {
+      // 2. 格式不正確，改發簡訊
+      var cleanPhone = String(payload.phone).replace(/-/g, "").replace(/\s/g, "").trim();
+      var message = "【訂單成立】喇當大叔的果園已經收到您的訂單。感謝您的支持！";
+      sendTwSms(cleanPhone, message);
+    }
 
     return jsonResp({ success: true, orderId: orderId });
 
@@ -168,14 +181,14 @@ function deductInventory(ss, items) {
 // ────────────────────────────────────────
 function updateCustomer(ss, customer) {
   const sheet = ss.getSheetByName(CUSTOMER_SHEET);
-  const data  = sheet.getDataRange().getValues();
+  const data = sheet.getDataRange().getValues();
 
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]).trim() === customer.phone) {
       // 更新現有記錄（只更新非空欄位）
       const row = i + 1;
       sheet.getRange(row, 2).setValue(customer.name);
-      if (customer.email)   sheet.getRange(row, 3).setValue(customer.email);
+      if (customer.email) sheet.getRange(row, 3).setValue(customer.email);
       if (customer.address) sheet.getRange(row, 4).setValue(customer.address);
       return;
     }
