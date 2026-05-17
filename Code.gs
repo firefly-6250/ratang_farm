@@ -98,7 +98,13 @@ function doPost(e) {
       '待匯款'  // 初始付款狀態
     ];
 
-    const nextRow = orderSheet.getLastRow() + 1;
+    // 以 A 欄最後一筆有值的列號 +1 決定寫入位置，
+    // 避免右側處理表的資料影響 getLastRow() 的結果
+    const colAValues = orderSheet.getRange('A:A').getValues();
+    let nextRow = 1;
+    for (let i = colAValues.length - 1; i >= 0; i--) {
+      if (colAValues[i][0] !== '') { nextRow = i + 2; break; }
+    }
     orderSheet.getRange(nextRow, 1, 1, rowData.length).setValues([rowData]);
 
     // 此工作表的「輸入欄」無法用 setNumberFormat 設格式；
