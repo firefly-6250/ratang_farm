@@ -9,7 +9,7 @@
 :root{--bg:#f3ecdb;--bg-deep:#ebe1c8;--paper:#fbf6ea;--ink:#1f1407;--ink-2:#4a3a26;--muted:#8a7a60;--line:#d8c89d;--line-2:#ebdfb8;--forest:#2d4a18;--moss:#4a7028;--moss-h:#385620;--leaf:#7d9a4f;--bark:#3a2410;--ember:#8a2a1c;--gold:#b8832a;--cream:#f5d88a;--r:16px;--r-lg:24px;--shadow-soft:0 1px 2px rgba(31,20,7,.05),0 6px 18px rgba(31,20,7,.07);--shadow-card:0 1px 2px rgba(31,20,7,.06),0 12px 28px -8px rgba(31,20,7,.16);--shadow-pop:0 -10px 30px rgba(31,20,7,.18)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;background-image:radial-gradient(rgba(31,20,7,.035) 1px,transparent 1.2px),radial-gradient(rgba(31,20,7,.025) 1px,transparent 1px);background-size:4px 4px,7px 7px;background-position:0 0,2px 3px}
-.stage{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(31,20,7,.08)}
+.stage{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative;overflow-x:hidden;box-shadow:0 0 60px rgba(31,20,7,.08)}
 @media(min-width:600px){body{padding:24px 0}.stage{border-radius:28px;min-height:calc(100vh - 48px);border:1px solid var(--line)}.gallery-btn{display:grid;place-items:center}}
 .hero{position:relative;height:460px;overflow:hidden;color:#fff;isolation:isolate}
 .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.95) contrast(1.05);z-index:0}
@@ -123,6 +123,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink)
 .field-label .req{color:var(--ember)}
 .field-label .opt{color:var(--muted);font-size:11px;letter-spacing:1px;font-weight:400}
 input[type=text],input[type=tel],input[type=email],input[type=number],textarea,select{width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-family:'Noto Sans TC',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:all .2s;-webkit-appearance:none}
+select{-webkit-appearance:menulist;appearance:menulist;appearance:auto}
 input:focus,textarea:focus,select:focus{border-color:var(--moss);box-shadow:0 0 0 4px rgba(74,112,40,.1)}
 input.err{border-color:var(--ember) !important}
 textarea{resize:vertical;min-height:84px;line-height:1.6}
@@ -325,7 +326,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
     </div>
     <div style="padding-top:18px">
       <div class="field"><div class="field-label">匯款帳號末五碼 <span class="req">*</span></div><input type="tel" id="transferLast5" placeholder="末 5 碼" inputmode="numeric" maxlength="5"><div class="field-err" id="transferLast5Err"></div></div>
-      <div class="field" style="margin-bottom:14px"><div class="field-label">匯款銀行 <span class="req">*</span></div>
+      <div class="field" style="margin-bottom:14px"><div class="field-label">匯款銀行 <span class="opt">選填</span></div>
         <select id="transferBank">
           <option value="">— 請選擇 —</option>
           <option value="004 臺灣銀行">004 臺灣銀行</option>
@@ -663,7 +664,6 @@ async function submitOrder() {
   const t5 = document.getElementById('transferLast5').value.trim();
   const tb = document.getElementById('transferBank').value;
   if (!/^\d{5}$/.test(t5)) { showErr('transferLast5Err', '請填寫 5 位數的末五碼'); return; }
-  if (!tb) { showErr('transferBankErr', '請選擇匯款銀行'); return; }
   clearErrors();
   const btn = document.getElementById('btnSubmit');
   btn.disabled = true; btn.textContent = '送出中…';
