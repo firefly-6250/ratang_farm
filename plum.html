@@ -233,7 +233,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 </div>
 </section>
 <section class="products">
-<div class="products-head"><h3>選購</h3><span class="meta">本季 · 限量供應</span></div>
+<div class="products-head"><h3>選購</h3><span class="meta">各李子產季不同，無法混搭出貨</span></div>
 <div id="productList"><div class="loading"><span class="spinner"></span>商品載入中…</div></div>
 </section>
 <div class="footer"><div>喇當大叔的果園 · 高山紅肉李 蜜李 西瓜李</div><div class="en">Ratang Farm · Highland Plums · Nantou</div></div>
@@ -257,9 +257,27 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="field"><div class="field-label">收件人電話 <span class="req">*</span></div><input type="tel" id="recipientPhone"><div class="field-err" id="recipientPhoneErr"></div></div>
 </div>
 <div class="form-card">
-<div class="form-card-title">收件地址</div>
+<div class="form-card-title">收件方式</div>
+<label class="gift-row" for="pickupToggle" style="margin-bottom:14px">
+<div class="icon">🏡</div>
+<div class="gift-text"><strong>改為埔里自取</strong><span class="sub">面交取貨 · 免運費與匯款</span></div>
+<div class="toggle"><input type="checkbox" id="pickupToggle" onchange="onPickupToggle()"><div class="slider"></div></div>
+</label>
+<div id="deliveryBox">
 <div class="field"><div class="field-label">完整地址 <span class="req">*</span></div><input type="text" id="address" placeholder="請填寫含縣市的完整地址"><div class="field-err" id="addressErr"></div></div>
-<div class="field" style="margin-bottom:14px"><div class="field-label">備註 <span class="opt">— 出貨注意</span></div><textarea id="note" placeholder="例：請於週末送達"></textarea></div>
+<div class="field"><div class="field-label">希望配送時段</div>
+<select id="deliveryTime">
+<option value="4">不指定</option>
+<option value="1">13 點前</option>
+<option value="2">14 點 ~ 18 點</option>
+</select></div>
+<label class="gift-row" for="codToggle" style="margin-bottom:0">
+<div class="icon">💵</div>
+<div class="gift-text"><strong>貨到付款</strong><span class="sub">每件加收 NT$30 物流處理費</span></div>
+<div class="toggle"><input type="checkbox" id="codToggle"><div class="slider"></div></div>
+</label>
+</div>
+<div class="field" style="margin-bottom:14px;margin-top:14px"><div class="field-label">備註 <span class="opt">— 出貨注意</span></div><textarea id="note" placeholder="例：請於週末送達"></textarea></div>
 </div>
 <button class="btn-primary" onclick="goToStep3()">下一步 · 結帳</button>
 </div>
@@ -281,10 +299,11 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="form-card">
 <div class="form-card-title">您的訂購</div>
 <div id="confirmItems"></div>
+<div id="confirmFeeRow" class="pay-row" style="display:none;padding:8px 0;border-top:1px dashed var(--line)"><span class="pk">物流處理費（貨到付款）</span><span class="pv" style="color:var(--ember)">NT$ <span id="confirmFee">0</span></span></div>
 <div class="sum-total"><span class="lbl">合計</span><span class="amt"><span class="small">NT$</span><span id="confirmTotal">0</span></span></div>
 </div>
 <div class="form-card"><div class="form-card-title">收件資料</div><div id="confirmInfo"></div></div>
-<div class="form-card">
+<div class="form-card" id="paymentSection">
 <div class="form-card-title">匯款資訊</div>
 <div class="payment-card">
 <h4>🏦 郵局轉帳</h4>
@@ -303,6 +322,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="field-err" id="transferBankErr"></div></div>
 </div>
 </div>
+<div class="form-card" id="noTransferSection" style="display:none"><div class="notice" id="noTransferNote" style="margin-bottom:0"></div></div>
 <button class="btn-primary" id="btnSubmit" onclick="submitOrder()">確認送出訂單</button>
 <button class="btn-back" onclick="goBack(2)">← 返回修改資料</button>
 </div>
@@ -316,15 +336,17 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="order-id-tag"><div class="lbl">ORDER ID</div><div class="id" id="successOrderId">—</div></div>
 </div>
 <div class="form-card">
-<div class="form-card-title">匯款提醒</div>
+<div class="form-card-title" id="successPayTitle">匯款提醒</div>
 <div class="payment-card">
-<h4>🏦 郵局轉帳</h4>
+<h4 id="successPayHead">🏦 郵局轉帳</h4>
+<div id="successBankRows">
 <div class="pay-row"><span class="pk">郵局代碼</span><span class="pv">700</span></div>
 <div class="pay-row"><span class="pk">帳號</span><span class="pv">0401312-0059371</span></div>
 <div class="pay-row"><span class="pk">戶名</span><span class="pv">亞輹恩.喇當</span></div>
-<div class="pay-row"><span class="pk">應匯金額</span><span class="pv" style="color:var(--ember)">NT$ <span id="successTotal">0</span></span></div>
-<div class="pay-row"><span class="pk">末五碼</span><span class="pv" id="successLast5">—</span></div>
-<div class="pay-row"><span class="pk">銀行</span><span class="pv" id="successBank">—</span></div>
+</div>
+<div class="pay-row"><span class="pk" id="successAmtLabel">應匯金額</span><span class="pv" style="color:var(--ember)">NT$ <span id="successTotal">0</span></span></div>
+<div class="pay-row" id="successLast5Row"><span class="pk">末五碼</span><span class="pv" id="successLast5">—</span></div>
+<div class="pay-row" id="successBankRow"><span class="pk">銀行</span><span class="pv" id="successBank">—</span></div>
 </div>
 </div>
 <button class="btn-primary" onclick="location.reload()">再次訂購</button>
@@ -339,7 +361,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="toast" id="toast">已複製</div>
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUHwWlvedxxVM-EyoYesMeE1WQkPhPpvVpdtV-T00USZpGl2Vr_5Ve6CTZjQCWBd1rjRYPFlECydpq/pub?gid=2123575135&single=true&output=csv';
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyQNKAy04wRqinoxIwpUH2Sz20CEcmwQ9Jzy5ylTUNjz5ckXUtkPqhyABL_F56ahcV8sA/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw9Xu6zKsXTvz0eqG_Nwm20qkqPDex6Y28bjqHQEjn_cODeN9S3eJXmDfa6vxdBjVfCCg/exec';
 let products = [];
 const cart = {};
 function parseCSV(text){const lines=text.trim().split(/\r?\n/);const headers=splitCSVLine(lines[0]);return lines.slice(1).filter(l=>l.trim()).map(l=>{const vals=splitCSVLine(l);const obj={};headers.forEach((h,i)=>obj[h.trim()]=(vals[i]||'').trim());return obj;});}
@@ -358,13 +380,15 @@ function renderProducts(){
     const variantsHtml=items.map(p=>{
       const base=Number(p.price);const eff=effPrice(p);const hasDisc=base>0&&eff<base;
       const priceHtml=base>0?`<span class="num${hasDisc?' sale':''}">${eff.toLocaleString()}</span>${hasDisc?`<span class="orig">NT$${base.toLocaleString()}</span>`:''}`:`<span class="num">洽詢</span>`;
-      return `<div class="variant${(cart[p.id]||0)>0?' in-cart':''}" id="variant-${p.id}"><div class="variant-info"><div class="variant-unit">${p.unit}</div><div class="variant-price"><span class="currency">NT$</span>${priceHtml}</div></div>${stepperHtml(p.id)}</div>`;
+      const count=p.count!==undefined&&p.count!==''?parseInt(p.count):null;
+      const soldOut=count!==null&&count===0;
+      return `<div class="variant${(cart[p.id]||0)>0?' in-cart':''}${soldOut?' sold-out':''}" id="variant-${p.id}"><div class="variant-info"><div class="variant-unit">${p.unit}</div><div class="variant-price"><span class="currency">NT$</span>${priceHtml}</div>${count!==null&&!soldOut?`<div class="stock-count">剩餘 ${count} 份</div>`:''}</div>${soldOut?'<span class="sold-out-label">售罄</span>':stepperHtml(p.id,count)}</div>`;
     }).join('');
     return `<article class="product-card"><div class="product-img">${imgSrc?`<img src="${imgSrc}" alt="${name}">`:''}<div class="product-img-cap"><div class="cn">${name}</div></div></div>${first.description?`<div class="product-body"><p class="product-desc">${first.description}</p></div>`:''}<div class="variants">${variantsHtml}</div></article>`;
   }).join('');
 }
-function stepperHtml(pid){const qty=cart[pid]||0;const empty=qty===0?'empty':'';return `<div class="stepper ${empty}" id="stepper-${pid}"><button class="minus" onclick="changeQty('${pid}',-1)" ${qty===0?'disabled':''}>−</button><span class="num">${qty}</span><button class="add" onclick="changeQty('${pid}',1)">${qty===0?'＋ 加入':'＋'}</button></div>`;}
-function changeQty(pid,delta){const cur=cart[pid]||0;const next=Math.max(0,cur+delta);if(next===0)delete cart[pid];else cart[pid]=next;document.getElementById('stepper-'+pid).outerHTML=stepperHtml(pid);const vEl=document.getElementById('variant-'+pid);if(vEl)vEl.classList.toggle('in-cart',next>0);const ns=document.getElementById('stepper-'+pid);if(ns&&delta>0){ns.classList.add('pulse');setTimeout(()=>ns.classList.remove('pulse'),350);}updateCart();}
+function stepperHtml(pid,count){const qty=cart[pid]||0;const empty=qty===0?'empty':'';const maxReached=count!==null&&count!==undefined&&qty>=count;return `<div class="stepper ${empty}" id="stepper-${pid}"><button class="minus" onclick="changeQty('${pid}',-1)" ${qty===0?'disabled':''}>−</button><span class="num">${qty}</span><button class="add" onclick="changeQty('${pid}',1)" ${maxReached?'disabled':''}>${qty===0?'＋ 加入':'＋'}</button></div>`;}
+function changeQty(pid,delta){const p=products.find(pr=>pr.id===pid);const count=p&&p.count!==undefined&&p.count!==''?parseInt(p.count):null;const cur=cart[pid]||0;const next=Math.max(0,count!==null?Math.min(count,cur+delta):cur+delta);if(next===0)delete cart[pid];else cart[pid]=next;document.getElementById('stepper-'+pid).outerHTML=stepperHtml(pid,count);const vEl=document.getElementById('variant-'+pid);if(vEl)vEl.classList.toggle('in-cart',next>0);const ns=document.getElementById('stepper-'+pid);if(ns&&delta>0){ns.classList.add('pulse');setTimeout(()=>ns.classList.remove('pulse'),350);}updateCart();}
 function cartCount(){return Object.values(cart).reduce((a,b)=>a+b,0);}
 function effPrice(p){const d=Number(p.discount);return (p.discount&&!isNaN(d)&&d>0)?d:Number(p.price);}
 function cartTotal(){return Object.entries(cart).reduce((s,[id,qty])=>{const p=products.find(x=>x.id===id);return s+(p?effPrice(p)*qty:0);},0);}
@@ -373,10 +397,13 @@ function goToStep2(){if(cartCount()>0)showPage(2);}
 function showErr(id,msg){document.getElementById(id).textContent=msg;const i=document.getElementById(id.replace('Err',''));if(i)i.classList.add('err');}
 function clearErrors(){document.querySelectorAll('.field-err').forEach(el=>el.textContent='');document.querySelectorAll('input.err,textarea.err,select.err').forEach(el=>el.classList.remove('err'));}
 function onGiftToggle(){document.getElementById('recipientBox').classList.toggle('show',document.getElementById('giftToggle').checked);}
+function onPickupToggle(){const pickup=document.getElementById('pickupToggle').checked;document.getElementById('deliveryBox').style.display=pickup?'none':'';if(pickup)document.getElementById('codToggle').checked=false;}
+const DELIVERY_LABELS={'1':'13 點前','2':'14 點 ~ 18 點','4':'不指定'};
+const COD_FEE_PER_ITEM=30;
 async function lookupCustomer(){const phone=document.getElementById('phone').value.trim();if(!phone){toast('請先輸入電話號碼');return;}const btn=document.getElementById('btnOld');btn.disabled=true;btn.textContent='查詢中…';try{const res=await fetch(`${GAS_URL}?action=getCustomer&phone=${encodeURIComponent(phone)}`);const data=await res.json();if(data.success&&data.customer){const c=data.customer;if(c.name)document.getElementById('buyerName').value=c.name;if(c.email)document.getElementById('email').value=c.email;if(c.address)document.getElementById('address').value=c.address;btn.textContent='✅ 已填入';}else{toast('找不到訂購紀錄，請手動填寫');btn.textContent='老客戶';}}catch{toast('查詢失敗，請手動填寫');btn.textContent='老客戶';}finally{btn.disabled=false;}}
-function goToStep3(){clearErrors();let ok=true;const isGift=document.getElementById('giftToggle').checked;const get=id=>document.getElementById(id).value.trim();const phone=get('phone'),name=get('buyerName'),email=get('email'),address=get('address'),recName=get('recipientName'),recPhone=get('recipientPhone');if(!phone){showErr('phoneErr','請填寫聯絡電話');ok=false;}if(!name){showErr('nameErr','請填寫姓名');ok=false;}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('emailErr','電子郵件格式不正確');ok=false;}if(!address){showErr('addressErr','請填寫收件地址');ok=false;}if(isGift){if(!recName){showErr('recipientNameErr','請填寫收件人姓名');ok=false;}if(!recPhone){showErr('recipientPhoneErr','請填寫收件人電話');ok=false;}}if(!ok)return;renderConfirm();showPage(3);}
-function renderConfirm(){const isGift=document.getElementById('giftToggle').checked;const get=id=>document.getElementById(id).value.trim();const phone=get('phone'),name=get('buyerName'),email=get('email'),address=get('address'),note=get('note'),recName=get('recipientName'),recPhone=get('recipientPhone');let total=0;document.getElementById('confirmItems').innerHTML=Object.entries(cart).map(([id,qty])=>{const v=products.find(x=>x.id===id);if(!v)return '';const base=Number(v.price);const eff=effPrice(v);const hasDisc=base>0&&eff<base;const sub=eff*qty;total+=sub;const img=v.picture||'李子照片/IMG_0305_0.JPG';const priceMeta=hasDisc?`NT$ ${eff.toLocaleString()} <s style="color:var(--muted)">NT$ ${base.toLocaleString()}</s>`:`NT$ ${eff.toLocaleString()}`;return `<div class="sum-item"><div class="sum-thumb" style="background-image:url('${img}')"></div><div class="sum-mid"><div class="name">${v.name}</div><div class="meta">${v.unit} · ${priceMeta} × ${qty}</div></div><div class="sum-amt">NT$ ${sub.toLocaleString()}</div></div>`;}).join('');document.getElementById('confirmTotal').textContent=total.toLocaleString();const rows=[['購買人',name],['電話',phone],['Email',email||'（未填）'],['地址',address]];if(isGift){rows.push(['收件人',recName]);rows.push(['收件電話',recPhone]);}if(note)rows.push(['備註',note]);document.getElementById('confirmInfo').innerHTML=rows.map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('');}
-async function submitOrder(){const t5=document.getElementById('transferLast5').value.trim();const tb=document.getElementById('transferBank').value;if(!/^\d{5}$/.test(t5)){showErr('transferLast5Err','請填寫 5 位數的末五碼');return;}clearErrors();const btn=document.getElementById('btnSubmit');btn.disabled=true;btn.textContent='送出中…';const isGift=document.getElementById('giftToggle').checked;const get=id=>document.getElementById(id).value.trim();let total=0;const items=Object.entries(cart).map(([id,qty])=>{const p=products.find(x=>x.id===id);const eff=effPrice(p);const sub=eff*qty;total+=sub;return{id,name:p.name,unit:p.unit,price:eff,qty,subtotal:sub};});const payload={orderType:'plum',buyerName:get('buyerName'),phone:get('phone'),email:get('email'),isGift,recipientName:get('recipientName'),recipientPhone:get('recipientPhone'),address:get('address'),note:get('note'),items,total,transferLast5:t5,transferBank:tb,orderTime:new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})};try{const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});const data=await res.json();if(data.success){document.getElementById('successOrderId').textContent=data.orderId;document.getElementById('successTotal').textContent=total.toLocaleString();document.getElementById('successLast5').textContent=t5;document.getElementById('successBank').textContent=tb;showPage(4);}else{throw new Error(data.message||'未知錯誤');}}catch(e){alert('訂單送出失敗：'+e.message+'\n\n請截圖或記錄您的商品，並來電或傳訊息給我們。');}finally{btn.disabled=false;btn.textContent='確認送出訂單';}}
+function goToStep3(){clearErrors();let ok=true;const isGift=document.getElementById('giftToggle').checked;const isPickup=document.getElementById('pickupToggle').checked;const get=id=>document.getElementById(id).value.trim();const phone=get('phone'),name=get('buyerName'),email=get('email'),address=get('address'),recName=get('recipientName'),recPhone=get('recipientPhone');if(!phone){showErr('phoneErr','請填寫聯絡電話');ok=false;}if(!name){showErr('nameErr','請填寫姓名');ok=false;}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('emailErr','電子郵件格式不正確');ok=false;}if(!isPickup&&!address){showErr('addressErr','請填寫收件地址');ok=false;}if(isGift){if(!recName){showErr('recipientNameErr','請填寫收件人姓名');ok=false;}if(!recPhone){showErr('recipientPhoneErr','請填寫收件人電話');ok=false;}}if(!ok)return;renderConfirm();showPage(3);}
+function renderConfirm(){const isGift=document.getElementById('giftToggle').checked;const isPickup=document.getElementById('pickupToggle').checked;const isCod=!isPickup&&document.getElementById('codToggle').checked;const deliveryTime=document.getElementById('deliveryTime').value;const get=id=>document.getElementById(id).value.trim();const phone=get('phone'),name=get('buyerName'),email=get('email'),address=get('address'),note=get('note'),recName=get('recipientName'),recPhone=get('recipientPhone');let total=0;document.getElementById('confirmItems').innerHTML=Object.entries(cart).map(([id,qty])=>{const v=products.find(x=>x.id===id);if(!v)return '';const base=Number(v.price);const eff=effPrice(v);const hasDisc=base>0&&eff<base;const sub=eff*qty;total+=sub;const img=v.picture||'李子照片/IMG_0305_0.JPG';const priceMeta=hasDisc?`NT$ ${eff.toLocaleString()} <s style="color:var(--muted)">NT$ ${base.toLocaleString()}</s>`:`NT$ ${eff.toLocaleString()}`;return `<div class="sum-item"><div class="sum-thumb" style="background-image:url('${img}')"></div><div class="sum-mid"><div class="name">${v.name}</div><div class="meta">${v.unit} · ${priceMeta} × ${qty}</div></div><div class="sum-amt">NT$ ${sub.toLocaleString()}</div></div>`;}).join('');const codFee=isCod?COD_FEE_PER_ITEM*cartCount():0;const feeRow=document.getElementById('confirmFeeRow');if(codFee>0){feeRow.style.display='';document.getElementById('confirmFee').textContent=codFee.toLocaleString();}else{feeRow.style.display='none';}total+=codFee;document.getElementById('confirmTotal').textContent=total.toLocaleString();const rows=[['購買人',name],['電話',phone],['Email',email||'（未填）']];if(isPickup){rows.push(['取貨方式','埔里自取']);}else{rows.push(['地址',address]);rows.push(['配送時段',DELIVERY_LABELS[deliveryTime]||'不指定']);}rows.push(['付款方式',isPickup?'面交付款':(isCod?'貨到付款':'匯款轉帳')]);if(isGift){rows.push(['收件人',recName]);rows.push(['收件電話',recPhone]);}if(note)rows.push(['備註',note]);document.getElementById('confirmInfo').innerHTML=rows.map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('');const needTransfer=!isPickup&&!isCod;document.getElementById('paymentSection').style.display=needTransfer?'':'none';const noTransfer=document.getElementById('noTransferSection');if(needTransfer){noTransfer.style.display='none';}else{noTransfer.style.display='';document.getElementById('noTransferNote').innerHTML=isPickup?'🏡 您選擇<strong>埔里自取</strong>，無需線上匯款，取貨時付款即可。':'💵 您選擇<strong>貨到付款</strong>，無需事先匯款，收到貨時再付款給配送員即可。';}}
+async function submitOrder(){const isGift=document.getElementById('giftToggle').checked;const isPickup=document.getElementById('pickupToggle').checked;const isCod=!isPickup&&document.getElementById('codToggle').checked;const deliveryTime=isPickup?'':document.getElementById('deliveryTime').value;const needTransfer=!isPickup&&!isCod;const t5=document.getElementById('transferLast5').value.trim();const tb=document.getElementById('transferBank').value;if(needTransfer&&!/^\d{5}$/.test(t5)){showErr('transferLast5Err','請填寫 5 位數的末五碼');return;}clearErrors();const btn=document.getElementById('btnSubmit');btn.disabled=true;btn.textContent='送出中…';const get=id=>document.getElementById(id).value.trim();let total=0;const items=Object.entries(cart).map(([id,qty])=>{const p=products.find(x=>x.id===id);const eff=effPrice(p);const sub=eff*qty;total+=sub;return{id,name:p.name,unit:p.unit,price:eff,qty,subtotal:sub};});const codFee=isCod?COD_FEE_PER_ITEM*cartCount():0;total+=codFee;const payload={orderType:'plum',buyerName:get('buyerName'),phone:get('phone'),email:get('email'),isGift,recipientName:get('recipientName'),recipientPhone:get('recipientPhone'),address:isPickup?'':get('address'),isPickup,deliveryTime,isCod,codFee,note:get('note'),items,total,transferLast5:needTransfer?t5:'',transferBank:needTransfer?tb:'',orderTime:new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})};try{const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});const data=await res.json();if(data.success){document.getElementById('successOrderId').textContent=data.orderId;document.getElementById('successTotal').textContent=total.toLocaleString();document.getElementById('successLast5').textContent=t5;document.getElementById('successBank').textContent=tb;document.getElementById('successBankRows').style.display=needTransfer?'':'none';document.getElementById('successLast5Row').style.display=needTransfer?'':'none';document.getElementById('successBankRow').style.display=needTransfer?'':'none';document.getElementById('successPayTitle').textContent=needTransfer?'匯款提醒':'付款提醒';document.getElementById('successPayHead').textContent=isPickup?'🏡 埔里自取':(isCod?'💵 貨到付款':'🏦 郵局轉帳');document.getElementById('successAmtLabel').textContent=needTransfer?'應匯金額':'應付金額';showPage(4);}else{throw new Error(data.message||'未知錯誤');}}catch(e){alert('訂單送出失敗：'+e.message+'\n\n請截圖或記錄您的商品，並來電或傳訊息給我們。');}finally{btn.disabled=false;btn.textContent='確認送出訂單';}}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>t.classList.remove('show'),1600);}
 document.addEventListener('click',e=>{const c=e.target.closest('.copyable');if(c&&navigator.clipboard){navigator.clipboard.writeText(c.dataset.copy);toast('已複製：'+c.dataset.copy);}});
 loadProducts();updateCart();

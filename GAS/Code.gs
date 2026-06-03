@@ -67,7 +67,7 @@ function doPost(e) {
     // ── 後端驗證 ──
     if (!payload.phone) return jsonResp({ success: false, message: '缺少電話' });
     if (!payload.buyerName) return jsonResp({ success: false, message: '缺少姓名' });
-    if (!payload.address) return jsonResp({ success: false, message: '缺少地址' });
+    if (!payload.address && !payload.isPickup) return jsonResp({ success: false, message: '缺少地址' });
     if (!payload.items || !payload.items.length) return jsonResp({ success: false, message: '無訂購品項' });
 
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -82,7 +82,14 @@ function doPost(e) {
       .map(i => `${i.name} ${i.unit}×${i.qty}`)
       .join(', ');
 
+    // 收件 / 付款方式
+    const isPickup = !!payload.isPickup;
+    const isCod = !isPickup && !!payload.isCod;
+    const payStatus = isPickup ? '面交付款' : (isCod ? '貨到付款' : '待匯款');
+    const deliveryTime = isPickup ? '' : (payload.deliveryTime ? Number(payload.deliveryTime) : '');
+
     // 訂單工作表欄位順序
+    // A~O 為原有欄位；P~S 為新增欄位（收件方式 / 配送時段 / 付款方式 / 物流處理費）
     const rowData = [
       orderId,
       payload.orderTime || new Date().toLocaleString('zh-TW'),
@@ -92,13 +99,17 @@ function doPost(e) {
       payload.isGift ? '是' : '否',
       payload.recipientName || '',
       payload.recipientPhone || '',
-      payload.address,
+      payload.address || '',
       payload.note || '',
       itemStr,
       payload.total,
       payload.transferLast5 || '',
       payload.transferBank || '',
-      '待匯款'  // 初始付款狀態
+      payStatus,                       // O 付款狀態
+      isPickup ? '埔里自取' : '宅配',   // P 收件方式
+      deliveryTime,                    // Q 配送時段（1/2/4）
+      isCod ? '貨到付款' : '匯款',      // R 付款方式
+      payload.codFee || 0              // S 物流處理費
     ];
 
     // 以 A 欄最後一筆有值的列號 +1 決定寫入位置，
