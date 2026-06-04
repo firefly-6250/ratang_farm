@@ -56,6 +56,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink)
 .products-head{padding:8px 2px 18px;display:flex;align-items:baseline;justify-content:space-between}
 .products-head h3{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;letter-spacing:3px;color:var(--ink)}
 .products-head .meta{font-size:11.5px;letter-spacing:1.5px;color:var(--muted)}
+.earlybird{display:flex;align-items:center;gap:10px;margin:-8px 2px 18px;padding:11px 14px;border-radius:14px;background:linear-gradient(120deg,rgba(245,216,138,.28),rgba(201,122,63,.14));border:1px solid rgba(201,122,63,.3);box-shadow:inset 0 0 0 1px rgba(253,243,231,.5)}
+.earlybird .eb-tag{flex-shrink:0;display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;background:var(--ember);color:#fff;font-family:'Noto Serif TC',serif;font-weight:700;font-size:11.5px;letter-spacing:1.5px;box-shadow:0 2px 8px rgba(160,45,68,.3)}
+.earlybird .eb-text{font-size:12.5px;line-height:1.5;color:var(--ink-2);letter-spacing:.5px;font-weight:500}
+.earlybird.note{margin-top:-10px;background:linear-gradient(120deg,rgba(74,16,36,.06),rgba(154,122,114,.08));border-color:var(--line)}
+.earlybird.note .eb-tag{background:var(--ink-2)}
 .product-card{background:var(--paper);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow-card);border:1px solid rgba(216,200,157,.5);transition:transform .25s ease}
 .product-card:hover{transform:translateY(-2px)}
 .product-img{position:relative;width:100%;aspect-ratio:16/11;overflow:hidden;background:var(--bg-deep)}
@@ -214,12 +219,11 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="story">
 <div class="story-eyebrow">A story rooted in the tribe</div>
 <h2>扎根在部落的<br>原生種紅肉李</h2>
-<p>有記憶以來，紅肉李與部落的脈動緊密相連。老人家以一片小石板或紅肉李樹作為彼此田裡的界線，互相尊重、互不越界。</p>
+<p>紅肉李是部落初夏代代相傳的滋味，父母因愛惜傳統作物保存了原生種的紅肉李至今，並陸續種下西瓜李、蜜李，不知不覺在山坡上長成了一片樹林。</p>
 <div class="story-body" id="storyBody">
-<p>每進入初夏結果時，將紅肉李摘採回家與家人分享，代代相傳，扎根在部落人的生活與飲食裡。</p>
-<p>父母親喜歡保存傳統作物，不小心把嫁接的範圍擴大，加上西瓜李、玫瑰蜜李、加州蜜李⋯越種越多，在山坡上長成了一整片樹林。</p>
-<p>果園生長在 1700 公尺高海拔上，人工鋤草、修剪枝條，不使用化學農藥是我們一直以來的堅持。果皮可能留有大自然的痕跡，難免果蠅叮咬，大小顆混裝出貨——要求完美者請勿下單。</p>
-<p>一年一收，產季兩到三週。每一顆都在七、八分熟時採收，以最佳狀態抵達你家。</p>
+<p>果園位處 1700 公尺高海拔，堅持全程人工鋤草、不使用化學農藥；因為將果園交還給生態，我們必須承擔極高的耗損——在挺過高山極大的日夜溫差、強風驟雨，並留下猴群、蟲鳥的「過路費」後，最終能順利下山的果實寥寥無幾，這份萬中選一的純淨與珍貴，正是它單價較高的原因。</p>
+<p>大自然的洗禮，讓果皮難免留有風疤或蟲咬的痕跡，我們採大小顆混裝出貨。沒有完美的表皮，卻有最野性純粹及最香甜的風味，若要求外觀完美無瑕者，請斟酌下單。</p>
+<p>一年一收，產季僅短短兩到三週。我們在七、八分熟時親手採摘，常溫寄送，讓這些挺過嚴苛考驗的後熟果實，以最佳的風味狀態抵達您家。</p>
 </div>
 <button class="story-toggle" id="storyBtn" onclick="toggleStory()">閱讀更多 →</button>
 </div>
@@ -233,7 +237,9 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 </div>
 </section>
 <section class="products">
-<div class="products-head"><h3>選購</h3><span class="meta">各李子產季不同，無法混搭出貨</span></div>
+<div class="products-head"><h3>選購</h3></div>
+<div class="earlybird"><span class="eb-tag">早鳥折扣</span><span class="eb-text">早鳥折扣價，即日起限時開放至 6 月 12 日止。</span></div>
+<div class="earlybird note"><span class="eb-tag">出貨提醒</span><span class="eb-text">各李子產季不同，無法混搭出貨。</span></div>
 <div id="productList"><div class="loading"><span class="spinner"></span>商品載入中…</div></div>
 </section>
 <div class="footer"><div>喇當大叔的果園 · 高山紅肉李 蜜李 西瓜李</div><div class="en">Ratang Farm · Highland Plums · Nantou</div></div>
