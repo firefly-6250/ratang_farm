@@ -367,7 +367,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="toast" id="toast">已複製</div>
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUHwWlvedxxVM-EyoYesMeE1WQkPhPpvVpdtV-T00USZpGl2Vr_5Ve6CTZjQCWBd1rjRYPFlECydpq/pub?gid=2123575135&single=true&output=csv';
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw9Xu6zKsXTvz0eqG_Nwm20qkqPDex6Y28bjqHQEjn_cODeN9S3eJXmDfa6vxdBjVfCCg/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwuHTGohw5Hj9MNn2a_HX7SJvh_0l23IYlDwooIJEIB22zPuozOobEBJY0gIw99Ql5b4w/exec';
 let products = [];
 const cart = {};
 function parseCSV(text){const lines=text.trim().split(/\r?\n/);const headers=splitCSVLine(lines[0]);return lines.slice(1).filter(l=>l.trim()).map(l=>{const vals=splitCSVLine(l);const obj={};headers.forEach((h,i)=>obj[h.trim()]=(vals[i]||'').trim());return obj;});}
