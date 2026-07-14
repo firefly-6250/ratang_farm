@@ -504,13 +504,16 @@ function renderProducts() {
     const first = items[0];
     const imgSrc = first.picture || '香菇照片/S__52232204.jpg';
     const variantsHtml = items.map(p => {
+      const count = p.count !== undefined && p.count !== '' ? parseInt(p.count) : null;
+      const soldOut = count !== null && count === 0;
       return `
-      <div class="variant${(cart[p.id]||0)>0?' in-cart':''}" id="variant-${p.id}">
+      <div class="variant${(cart[p.id]||0)>0?' in-cart':''}${soldOut?' sold-out':''}" id="variant-${p.id}">
         <div class="variant-info">
           <div class="variant-unit">${p.unit}</div>
           <div class="variant-price"><span class="currency">NT$</span><span class="num">${Number(p.price)>0?Number(p.price).toLocaleString():'洽詢'}</span></div>
+          ${count !== null && !soldOut ? `<div class="stock-count">剩餘 ${count} 份</div>` : ''}
         </div>
-        ${stepperHtml(p.id)}
+        ${soldOut ? '<span class="sold-out-label">售罄</span>' : stepperHtml(p.id, count)}
       </div>`;
     }).join('');
     return `
@@ -525,21 +528,24 @@ function renderProducts() {
   }).join('');
 }
 
-function stepperHtml(pid) {
+function stepperHtml(pid, count) {
   const qty = cart[pid] || 0;
   const empty = qty === 0 ? 'empty' : '';
+  const maxReached = count !== null && count !== undefined && qty >= count;
   return `<div class="stepper ${empty}" id="stepper-${pid}">
     <button class="minus" onclick="changeQty('${pid}',-1)" ${qty===0?'disabled':''}>−</button>
     <span class="qty-num">${qty}</span>
-    <button class="add" onclick="changeQty('${pid}',1)">${qty===0?'＋ 加入':'＋'}</button>
+    <button class="add" onclick="changeQty('${pid}',1)" ${maxReached?'disabled':''}>${qty===0?'＋ 加入':'＋'}</button>
   </div>`;
 }
 
 function changeQty(pid, delta) {
+  const p = products.find(pr => pr.id === pid);
+  const count = p && p.count !== undefined && p.count !== '' ? parseInt(p.count) : null;
   const cur = cart[pid] || 0;
-  const next = Math.max(0, cur + delta);
+  const next = Math.max(0, count !== null ? Math.min(count, cur + delta) : cur + delta);
   if (next === 0) delete cart[pid]; else cart[pid] = next;
-  document.getElementById('stepper-' + pid).outerHTML = stepperHtml(pid);
+  document.getElementById('stepper-' + pid).outerHTML = stepperHtml(pid, count);
   const vEl = document.getElementById('variant-' + pid);
   if (vEl) vEl.classList.toggle('in-cart', next > 0);
   const ns = document.getElementById('stepper-' + pid);

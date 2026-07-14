@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>喇當大叔的果園 · 白姑大山的高山恩賜</title>
+<meta name="description" content="海拔之上，雲霧之間。喇當大叔的果園來自南投白姑大山，友善耕作的椴木香菇與高山紅肉李，把山的純淨慢慢交還給你。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* organic mountain-orchard palette */
+  --paper:#f1e9da;          /* warm oat paper      */
+  --paper-deep:#e7dcc7;
+  --pine:#1c2c22;           /* deep pine forest    */
+  --pine-2:#26392c;
+  --moss:#5b6b48;           /* moss / leaf         */
+  --moss-soft:#7e8c63;
+  --bark:#4a382a;           /* tree bark           */
+  --persimmon:#c4592b;      /* warm accent         */
+  --persimmon-2:#d9743f;
+  --plum:#7c2a3a;           /* plum accent         */
+  --ink:#241c14;
+  --ink-soft:#6a5c4a;
+  --cream:#f7efe1;
+  --line:rgba(36,28,20,.14);
+  --gold:#bd8b3e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* ── grain overlay ── */
+body::before{
+  content:"";position:fixed;inset:0;z-index:9000;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.serif{font-family:'Noto Serif TC',serif}
+.lat{font-family:'Fraunces',serif}
+
+/* ════ TOP BAR ════ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:8000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px clamp(18px,5vw,64px);
+  transition:background .4s,padding .4s,box-shadow .4s;
+}
+.topbar.scrolled{
+  background:rgba(241,233,218,.86);
+  backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 var(--line);
+  padding-top:11px;padding-bottom:11px;
+}
+.tb-brand{display:flex;align-items:center;gap:11px;color:var(--cream);transition:color .4s}
+.topbar.scrolled .tb-brand{color:var(--ink)}
+.tb-seal{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;
+  border:1.5px solid rgba(247,239,225,.5);box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.topbar.scrolled .tb-seal{border-color:var(--moss)}
+.tb-seal img{width:100%;height:100%;object-fit:cover}
+.tb-name{font-family:'Noto Serif TC',serif;font-weight:700;font-size:15px;letter-spacing:3px}
+.tb-cta{
+  font-family:'Fraunces',serif;font-style:italic;font-size:14px;letter-spacing:.5px;
+  color:var(--cream);border:1px solid rgba(247,239,225,.45);
+  padding:7px 18px;border-radius:999px;transition:all .4s;
+}
+.topbar.scrolled .tb-cta{color:var(--pine);border-color:var(--moss)}
+.tb-cta:hover{background:var(--persimmon);border-color:var(--persimmon);color:#fff}
+
+/* ════ HERO ════ */
+.hero{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:0 clamp(18px,5vw,64px) clamp(40px,7vh,80px);
+  background:var(--pine);overflow:hidden;
+}
+.hero-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:.62;transform:scale(1.08);
+  animation:heroZoom 14s ease-out forwards;
+}
+@keyframes heroZoom{to{transform:scale(1)}}
+.hero::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(28,44,34,.55) 0%,rgba(28,44,34,.05) 35%,rgba(28,44,34,.65) 78%,rgba(20,32,25,.95) 100%),
+    radial-gradient(120% 80% at 50% 110%,rgba(196,89,43,.22),transparent 60%);
+}
+.hero-inner{position:relative;z-index:2;max-width:880px}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:14px;margin-bottom:22px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:400;
+  font-size:clamp(15px,2.2vw,19px);letter-spacing:1px;color:var(--cream);
+  opacity:0;transform:translateY(20px);
+}
+.hero-eyebrow .rule{flex:0 0 46px;height:1px;background:rgba(247,239,225,.6)}
+.hero h1{
+  font-family:'Noto Serif TC',serif;font-weight:900;color:var(--cream);
+  font-size:clamp(46px,11vw,108px);line-height:.98;letter-spacing:6px;
+  text-shadow:0 4px 40px rgba(0,0,0,.5);
+}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line span{display:block;transform:translateY(110%)}
+.hero h1 em{
+  font-style:normal;color:var(--persimmon-2);
+  text-shadow:0 4px 30px rgba(196,89,43,.4);
+}
+.hero-tag{
+  margin-top:26px;max-width:480px;color:rgba(247,239,225,.9);
+  font-size:clamp(15px,2.4vw,18px);line-height:1.85;font-weight:300;
+  letter-spacing:.5px;opacity:0;transform:translateY(20px);
+}
+.hero-foot{
+  margin-top:38px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;
+  opacity:0;transform:translateY(20px);
+}
+.badge-elev{
+  display:inline-flex;align-items:baseline;gap:6px;
+  font-family:'Fraunces',serif;color:var(--cream);
+  border:1px solid rgba(247,239,225,.4);border-radius:999px;
+  padding:8px 18px;letter-spacing:1px;font-size:14px;
+}
+.badge-elev b{font-size:19px;font-weight:600}
+.hero-loc{
+  font-family:'Fraunces',serif;font-style:italic;font-size:14px;
+  letter-spacing:.5px;color:rgba(247,239,225,.7);
+}
+/* hero load animation */
+.hero.loaded .hero-eyebrow{animation:fadeUp .9s .2s ease forwards}
+.hero.loaded h1 .line:nth-child(1) span{animation:slideUp 1s .35s cubic-bezier(.2,.8,.2,1) forwards}
+.hero.loaded h1 .line:nth-child(2) span{animation:slideUp 1s .5s cubic-bezier(.2,.8,.2,1) forwards}
+.hero.loaded .hero-tag{animation:fadeUp .9s .8s ease forwards}
+.hero.loaded .hero-foot{animation:fadeUp .9s .95s ease forwards}
+@keyframes slideUp{to{transform:translateY(0)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.scroll-cue{
+  position:absolute;left:50%;bottom:22px;z-index:3;transform:translateX(-50%);
+  width:22px;height:36px;border:1.5px solid rgba(247,239,225,.5);border-radius:14px;
+  opacity:0;animation:fadeUp .9s 1.4s ease forwards;
+}
+.scroll-cue::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;
+  margin-left:-1.5px;border-radius:2px;background:var(--cream);
+  animation:cue 1.6s 2s ease-in-out infinite}
+@keyframes cue{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(11px)}}
+
+/* ════ MARQUEE RIBBON ════ */
+.ribbon{
+  background:var(--pine-2);color:var(--cream);overflow:hidden;
+  padding:14px 0;border-top:1px solid rgba(247,239,225,.08);
+  border-bottom:1px solid rgba(247,239,225,.08);
+}
+.ribbon-track{display:flex;width:max-content;animation:scrollX 32s linear infinite}
+.ribbon-track span{
+  font-family:'Fraunces',serif;font-style:italic;font-size:18px;letter-spacing:1px;
+  padding:0 30px;white-space:nowrap;opacity:.85;
+}
+.ribbon-track span::before{content:"❋";margin-right:30px;color:var(--persimmon-2);font-style:normal}
+@keyframes scrollX{to{transform:translateX(-50%)}}
+
+/* ════ SECTIONS shared ════ */
+.section{padding:clamp(64px,11vw,140px) clamp(18px,5vw,64px);position:relative}
+.kicker{
+  font-family:'Fraunces',serif;font-style:italic;font-size:16px;letter-spacing:1px;
+  color:var(--persimmon);margin-bottom:14px;display:flex;align-items:center;gap:12px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--persimmon);display:inline-block}
+
+/* ── STORY ── */
+.story{max-width:1100px;margin:0 auto;display:grid;
+  grid-template-columns:1.05fr .95fr;gap:clamp(30px,6vw,80px);align-items:center}
+.story-text h2{
+  font-family:'Noto Serif TC',serif;font-weight:700;color:var(--pine);
+  font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:2px;margin-bottom:24px;
+}
+.story-text h2 em{font-style:normal;color:var(--persimmon);
+  font-family:'Fraunces',serif;font-weight:400}
+.story-text p{color:var(--ink-soft);margin-bottom:18px;font-weight:300;font-size:16.5px}
+.story-text .lead{color:var(--ink);font-size:18px;font-weight:400}
+.pull{
+  margin:30px 0 6px;padding-left:22px;border-left:3px solid var(--persimmon);
+  font-family:'Noto Serif TC',serif;font-size:19px;font-weight:600;
+  color:var(--bark);line-height:1.7;letter-spacing:1px;
+}
+.story-fig{position:relative}
+.story-fig img{
+  width:100%;border-radius:6px;aspect-ratio:4/5;object-fit:cover;
+  box-shadow:0 30px 60px -20px rgba(36,28,20,.45);
+}
+.story-fig .stamp{
+  position:absolute;bottom:-26px;left:-26px;width:118px;height:118px;
+  background:var(--persimmon);color:var(--cream);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;box-shadow:0 16px 30px -8px rgba(196,89,43,.55);
+  transform:rotate(-9deg);
+}
+.story-fig .stamp .n{font-family:'Fraunces',serif;font-weight:600;font-size:34px;line-height:1}
+.story-fig .stamp .t{font-size:11px;letter-spacing:2px;margin-top:3px}
+
+/* ── DIVIDER (botanical) ── */
+.divider{display:flex;align-items:center;gap:18px;max-width:1100px;margin:0 auto;
+  padding:0 clamp(18px,5vw,64px);color:var(--moss)}
+.divider .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.divider svg{flex:0 0 auto;width:46px;height:46px;opacity:.85}
+
+/* ── PRODUCTS ── */
+.products{background:var(--pine);color:var(--cream)}
+.products .kicker{color:var(--persimmon-2)}
+.products .kicker::before{background:var(--persimmon-2)}
+.prod-head{max-width:1100px;margin:0 auto 60px;text-align:center}
+.prod-head h2{font-family:'Noto Serif TC',serif;font-weight:700;
+  font-size:clamp(28px,4.6vw,44px);letter-spacing:3px;line-height:1.3}
+.prod-head .kicker{justify-content:center}
+.prod-head p{color:rgba(247,239,225,.65);max-width:520px;margin:16px auto 0;font-weight:300}
+.prod{max-width:1080px;margin:0 auto;display:grid;
+  grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center;
+  padding:clamp(40px,6vw,72px) 0;}
+.prod.rev .prod-media{order:2}
+.prod-media{position:relative}
+.prod-media img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:6px;
+  box-shadow:0 30px 60px -24px rgba(0,0,0,.6)}
+.prod-media .tagimg{
+  position:absolute;top:18px;left:18px;background:var(--cream);color:var(--pine);
+  font-family:'Noto Serif TC',serif;font-weight:700;font-size:13px;letter-spacing:2px;
+  padding:6px 14px;border-radius:999px;
+}
+.prod-info .pn{
+  font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(30px,5vw,52px);
+  letter-spacing:3px;line-height:1.05;color:var(--cream);margin-bottom:6px}
+.prod-info .pn em{font-style:normal;color:var(--persimmon-2)}
+.prod-info .plat{font-family:'Fraunces',serif;font-style:italic;font-size:17px;
+  color:rgba(247,239,225,.6);letter-spacing:.5px;margin-bottom:22px}
+.prod-info p{color:rgba(247,239,225,.78);font-weight:300;margin-bottom:18px;line-height:1.85}
+.prod-spec{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 30px}
+.prod-spec span{font-size:13px;letter-spacing:1px;padding:6px 14px;border-radius:999px;
+  border:1px solid rgba(247,239,225,.22);color:rgba(247,239,225,.85)}
+.btn-shop{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--persimmon);color:#fff;font-family:'Noto Serif TC',serif;
+  font-weight:700;letter-spacing:2px;font-size:15px;
+  padding:15px 30px;border-radius:999px;transition:all .3s;
+  box-shadow:0 12px 28px -10px rgba(196,89,43,.7);
+}
+.btn-shop .ar{transition:transform .3s}
+.btn-shop:hover{background:var(--persimmon-2);transform:translateY(-2px)}
+.btn-shop:hover .ar{transform:translateX(5px)}
+.prod-info .season{margin-top:14px;font-family:'Fraunces',serif;font-style:italic;
+  font-size:14px;color:var(--gold)}
+
+/* ── VALUES STRIP ── */
+.values{max-width:1100px;margin:0 auto;display:grid;
+  grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,44px)}
+.value{text-align:center}
+.value .vsvg{width:48px;height:48px;margin:0 auto 16px;color:var(--moss)}
+.value h4{font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;
+  letter-spacing:2px;color:var(--pine);margin-bottom:8px}
+.value p{font-size:13.5px;color:var(--ink-soft);font-weight:300;line-height:1.7}
+.values-head{text-align:center;max-width:680px;margin:0 auto 56px}
+.values-head h2{font-family:'Noto Serif TC',serif;font-weight:700;
+  font-size:clamp(26px,4.4vw,42px);letter-spacing:2px;color:var(--pine);line-height:1.3}
+.values-head .kicker{justify-content:center}
+.values-head p{color:var(--ink-soft);margin-top:16px;font-weight:300}
+
+/* ── GALLERY ── */
+.gallery-sec{background:var(--paper-deep)}
+.gallery{max-width:1140px;margin:0 auto;
+  columns:3;column-gap:16px;}
+.gallery figure{break-inside:avoid;margin-bottom:16px;position:relative;
+  border-radius:6px;overflow:hidden;box-shadow:0 14px 34px -18px rgba(36,28,20,.5)}
+.gallery img{width:100%;transition:transform .8s ease}
+.gallery figure:hover img{transform:scale(1.06)}
+.gallery figcaption{
+  position:absolute;left:14px;bottom:12px;color:#fff;
+  font-family:'Noto Serif TC',serif;font-size:14px;letter-spacing:2px;
+  text-shadow:0 2px 10px rgba(0,0,0,.7);
+}
+.gallery figure::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(28,44,34,.55),transparent 45%);
+  opacity:.7;transition:opacity .4s}
+.gallery figure:hover::after{opacity:1}
+
+/* ── CTA / FOOTER ── */
+.cta{
+  background:var(--pine);color:var(--cream);text-align:center;
+  padding:clamp(70px,11vw,130px) clamp(18px,5vw,64px);position:relative;overflow:hidden;
+}
+.cta::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(80% 60% at 50% 0%,rgba(196,89,43,.18),transparent 60%)}
+.cta-inner{position:relative;z-index:2;max-width:680px;margin:0 auto}
+.cta .lat{font-family:'Fraunces',serif;font-style:italic;color:var(--persimmon-2);
+  font-size:18px;letter-spacing:1px;display:block;margin-bottom:14px}
+.cta h2{font-family:'Noto Serif TC',serif;font-weight:700;
+  font-size:clamp(30px,5.5vw,56px);letter-spacing:3px;line-height:1.25;margin-bottom:30px}
+.cta-btns{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.cta-btns a{padding:16px 36px;border-radius:999px;font-family:'Noto Serif TC',serif;
+  font-weight:700;letter-spacing:2px;font-size:16px;transition:all .3s}
+.cta-btns .b1{background:var(--persimmon);color:#fff;box-shadow:0 14px 30px -10px rgba(196,89,43,.7)}
+.cta-btns .b1:hover{background:var(--persimmon-2);transform:translateY(-2px)}
+.cta-btns .b2{border:1px solid rgba(247,239,225,.4);color:var(--cream)}
+.cta-btns .b2:hover{background:rgba(247,239,225,.1);border-color:var(--cream)}
+
+.footer{background:#16221b;color:rgba(247,239,225,.7);
+  padding:clamp(46px,7vw,72px) clamp(18px,5vw,64px) 40px}
+.footer-grid{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;
+  justify-content:space-between;gap:34px;align-items:flex-start}
+.f-brand{display:flex;align-items:center;gap:14px}
+.f-seal{width:54px;height:54px;border-radius:50%;overflow:hidden;flex-shrink:0;
+  border:1.5px solid rgba(247,239,225,.3)}
+.f-seal img{width:100%;height:100%;object-fit:cover}
+.f-brand .fn{font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;
+  letter-spacing:3px;color:var(--cream)}
+.f-brand .fl{font-family:'Fraunces',serif;font-style:italic;font-size:13px;
+  color:rgba(247,239,225,.5);margin-top:3px}
+.f-col h5{font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:2px;
+  color:rgba(247,239,225,.5);margin-bottom:14px;font-weight:500}
+.f-col a,.f-col p{display:block;font-size:14px;margin-bottom:9px;font-weight:300;
+  color:rgba(247,239,225,.78);transition:color .25s}
+.f-col a:hover{color:var(--persimmon-2)}
+.f-bottom{max-width:1100px;margin:44px auto 0;padding-top:24px;
+  border-top:1px solid rgba(247,239,225,.1);
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;
+  font-size:12.5px;letter-spacing:.5px;color:rgba(247,239,225,.45)}
+
+/* ── reveal on scroll ── */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.1s}.reveal.d2{transition-delay:.2s}
+.reveal.d3{transition-delay:.3s}.reveal.d4{transition-delay:.4s}
+
+/* ── responsive ── */
+@media(max-width:860px){
+  .story{grid-template-columns:1fr;gap:48px}
+  .story-fig{order:-1;max-width:420px;margin:0 auto}
+  .prod{grid-template-columns:1fr;gap:30px}
+  .prod.rev .prod-media{order:0}
+  .prod-info{text-align:left}
+  .values{grid-template-columns:1fr 1fr;gap:36px 24px}
+  .gallery{columns:2}
+  .tb-cta{display:none}
+}
+@media(max-width:480px){
+  .gallery{columns:1}
+  .story-fig .stamp{width:92px;height:92px;left:-14px;bottom:-18px}
+  .story-fig .stamp .n{font-size:26px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .hero h1 .line span{transform:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ TOP BAR ════ -->
+<header class="topbar" id="topbar">
+  <a class="tb-brand" href="#top">
+    <span class="tb-seal"><img src="https://i.meee.com.tw/qbs7iFL.jpg" alt="喇當大叔的果園 logo"></span>
+    <span class="tb-name">喇當大叔的果園</span>
+  </a>
+  <a class="tb-cta lat" href="#shop">Order&nbsp;·&nbsp;訂購</a>
+</header>
+
+<!-- ════ HERO ════ -->
+<section class="hero" id="top">
+  <img class="hero-img" src="李子照片/IMG_0305_0.JPG" alt="白姑大山高山果園" onerror="this.style.opacity=.35">
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><span class="rule"></span>Ratang Farm · Bāigū Mountain, Nantou</div>
+    <h1 class="serif">
+      <span class="line"><span>白姑大山</span></span>
+      <span class="line"><span>的<em>高山恩賜</em></span></span>
+    </h1>
+    <p class="hero-tag">海拔之上，雲霧之間。我們把果園交還給生態，<br>讓山自己決定，什麼才是真正的好滋味。</p>
+    <div class="hero-foot">
+      <span class="badge-elev">海拔 <b>1700</b> m</span>
+      <span class="hero-loc">人工鋤草 · 不施化學農藥 · 友善耕作</span>
+    </div>
+  </div>
+  <span class="scroll-cue"></span>
+</section>
+
+<!-- ════ RIBBON ════ -->
+<div class="ribbon" aria-hidden="true">
+  <div class="ribbon-track">
+    <span>椴木香菇</span><span>高山紅肉李</span><span>柴燒煙燻</span><span>友善耕作</span><span>慢熟的滋味</span><span>萬中選一</span>
+    <span>椴木香菇</span><span>高山紅肉李</span><span>柴燒煙燻</span><span>友善耕作</span><span>慢熟的滋味</span><span>萬中選一</span>
+  </div>
+</div>
+
+<!-- ════ STORY ════ -->
+<section class="section">
+  <div class="story">
+    <div class="story-text">
+      <div class="kicker reveal">A story from the cloud forest</div>
+      <h2 class="reveal d1">把果園<em>交還</em>給山，<br>留下萬中選一的純淨</h2>
+      <p class="lead reveal d1">在南投仁愛鄉的群山深處，泰雅族人世代敬畏的白姑大山靜靜聳立。喇當大叔的果園，就在這片雲霧繚繞的高海拔山林之間。</p>
+      <p class="reveal d2">果園位處 1700 公尺，我們堅持全程人工鋤草、不使用化學農藥。因為將果園交還給生態，就必須承擔極高的耗損——在挺過日夜溫差、強風驟雨，並留下猴群與蟲鳥的「過路費」後，最終能順利下山的果實寥寥無幾。</p>
+      <div class="pull reveal d2">「這份萬中選一的珍貴，<br>正是高山給我們最誠實的回答。」</div>
+    </div>
+    <figure class="story-fig reveal d2">
+      <img src="李子照片/IMGP3598_0.JPG" alt="剛採下的高山紅肉李" onerror="this.style.background='#26392c'">
+      <div class="stamp">
+        <span class="n lat">1700</span>
+        <span class="t">METERS</span>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- botanical divider -->
+<div class="divider" aria-hidden="true">
+  <span class="ln"></span>
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+    <path d="M24 6 V42"/>
+    <path d="M24 16 C16 14 12 18 10 24 C18 24 22 22 24 16Z" fill="currentColor" fill-opacity=".15"/>
+    <path d="M24 24 C32 22 36 26 38 32 C30 32 26 30 24 24Z" fill="currentColor" fill-opacity=".15"/>
+    <path d="M24 12 C30 11 33 14 34 18 C28 18 25 16 24 12Z" fill="currentColor" fill-opacity=".15"/>
+  </svg>
+  <span class="ln"></span>
+</div>
+
+<!-- ════ PRODUCTS ════ -->
+<section class="section products" id="shop">
+  <div class="prod-head">
+    <div class="kicker reveal">Two gifts from the mountain</div>
+    <h2 class="reveal d1">兩種山的味道，<br>一樣的慢熟與堅持</h2>
+    <p class="reveal d2">不催、不趕，讓時間與海拔慢慢凝聚出最扎實的風味。點選下方品項即可前往訂購。</p>
+  </div>
+
+  <!-- 椴木香菇 -->
+  <div class="prod">
+    <div class="prod-media reveal">
+      <img src="香菇照片/S__52232207.jpg" alt="椴木上的香菇" onerror="this.style.background='#26392c'">
+      <span class="tagimg">柴燒煙燻</span>
+    </div>
+    <div class="prod-info reveal d1">
+      <div class="pn serif">椴木<em>香菇</em></div>
+      <div class="plat">Log-grown Shiitake · Smoke-cured</div>
+      <p>族人堅持最傳統的椴木栽培，靠勞力翻動厚實木頭，讓菌種在天然原木中深耕；再守在爐火旁，以柴燒緩慢烘烤數十小時，讓沉穩的煙燻木質香氣滲進菌褶深處。</p>
+      <div class="prod-spec">
+        <span>原木栽培</span><span>傳統部落工法</span><span>不催不趕慢熟</span>
+      </div>
+      <a class="btn-shop" href="order.html">前往訂購 <span class="ar">→</span></a>
+      <div class="season">產地 · 白姑大山腳下紅香部落</div>
+    </div>
+  </div>
+
+  <!-- 高山紅肉李 -->
+  <div class="prod rev">
+    <div class="prod-media reveal">
+      <img src="李子照片/IMAG4465_0.jpg" alt="枝頭結果纍纍的高山李" onerror="this.style.background='#26392c'">
+      <span class="tagimg">高山鮮採</span>
+    </div>
+    <div class="prod-info reveal d1">
+      <div class="pn serif">高山<em>紅肉李</em></div>
+      <div class="plat">Highland Plums · Hand-picked at 1700m</div>
+      <p>李子十分嬌貴，我們在七、八分熟時鮮採裝箱。剛從 1700 公尺採下帶著爽脆與微酸，在室溫下持續後熟，果肉漸軟，甜度與香氣隨之大爆發——這是高山給的後熟魔法。</p>
+      <div class="prod-spec">
+        <span>紅肉李 · 蜜李 · 西瓜李</span><span>友善耕作</span><span>產季限定</span>
+      </div>
+      <a class="btn-shop" href="plum.html">前往訂購 <span class="ar">→</span></a>
+      <div class="season">各品種產季不同，依訂單順序採收出貨</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ VALUES ════ -->
+<section class="section">
+  <div class="values-head">
+    <div class="kicker reveal">Our way of farming</div>
+    <h2 class="reveal d1">把選擇權，交給土地</h2>
+    <p class="reveal d2">高海拔的耕作沒有捷徑。我們用最費力的方式，換最純淨的果實。</p>
+  </div>
+  <div class="values">
+    <div class="value reveal d1">
+      <svg class="vsvg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 38 L24 8 L40 38Z"/><path d="M16 38 L24 22 L32 38"/>
+      </svg>
+      <h4>海拔 1700m</h4>
+      <p>雲霧與冷冽日夜溫差，讓風味格外扎實。</p>
+    </div>
+    <div class="value reveal d2">
+      <svg class="vsvg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 42 C24 28 14 22 10 12 C24 14 24 26 24 30"/><path d="M24 34 C24 24 32 20 38 14 C30 28 26 30 24 34"/>
+      </svg>
+      <h4>全程人工鋤草</h4>
+      <p>不用除草劑，靠雙手把雜草一一拔除。</p>
+    </div>
+    <div class="value reveal d3">
+      <svg class="vsvg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="24" cy="24" r="15"/><path d="M16 26 L22 32 L33 18"/>
+      </svg>
+      <h4>不施化學農藥</h4>
+      <p>承擔自然耗損，也要守住一份純淨。</p>
+    </div>
+    <div class="value reveal d4">
+      <svg class="vsvg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 8 C30 14 30 22 24 26 C18 22 18 14 24 8Z"/><path d="M24 26 V40"/><path d="M24 32 C28 30 34 32 36 36 C30 38 26 36 24 32Z"/>
+      </svg>
+      <h4>友善耕作</h4>
+      <p>留猴群蟲鳥的過路費，與生態共享山林。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ GALLERY ════ -->
+<section class="section gallery-sec">
+  <div class="prod-head" style="margin-bottom:48px">
+    <div class="kicker reveal" style="color:var(--persimmon);justify-content:center">From the orchard</div>
+    <h2 class="reveal d1" style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:clamp(28px,4.6vw,44px);letter-spacing:3px;color:var(--pine)">果園時刻</h2>
+  </div>
+  <div class="gallery reveal d1">
+    <figure><img src="李子照片/IMAG4465_0.jpg" alt="" onerror="this.parentNode.style.display='none'"><figcaption>枝頭 · 結果纍纍</figcaption></figure>
+    <figure><img src="香菇照片/S__52232204.jpg" alt="" onerror="this.parentNode.style.display='none'"><figcaption>椴木 · 柴燒慢烘</figcaption></figure>
+    <figure><img src="李子照片/DSCF4887_0.JPG" alt="" onerror="this.parentNode.style.display='none'"><figcaption>剛摘下的清晨</figcaption></figure>
+    <figure><img src="香菇照片/S__52232206.jpg" alt="" onerror="this.parentNode.style.display='none'"><figcaption>厚實的菌肉</figcaption></figure>
+    <figure><img src="李子照片/IMGP3598_0.JPG" alt="" onerror="this.parentNode.style.display='none'"><figcaption>果肉 · 香甜的黃</figcaption></figure>
+    <figure><img src="李子照片/IMG_0008.JPG" alt="" onerror="this.parentNode.style.display='none'"><figcaption>高山的雲與霧</figcaption></figure>
+  </div>
+</section>
+
+<!-- ════ CTA ════ -->
+<section class="cta">
+  <div class="cta-inner reveal">
+    <span class="lat">Taste the mountain, slowly.</span>
+    <h2 class="serif">把白姑大山的純淨<br>慢慢交還給你</h2>
+    <div class="cta-btns">
+      <a class="b1" href="order.html">訂購椴木香菇</a>
+      <a class="b2" href="plum.html">訂購高山紅肉李</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="f-brand">
+      <span class="f-seal"><img src="https://i.meee.com.tw/qbs7iFL.jpg" alt="logo"></span>
+      <div>
+        <div class="fn">喇當大叔的果園</div>
+        <div class="fl">Ratang Farm · Nantou, Taiwan</div>
+      </div>
+    </div>
+    <div class="f-col">
+      <h5>訂購</h5>
+      <a href="order.html">椴木香菇</a>
+      <a href="plum.html">高山紅肉李</a>
+    </div>
+    <div class="f-col">
+      <h5>聯絡</h5>
+      <a href="https://www.facebook.com/RatangsFruitFarm" target="_blank" rel="noopener">Facebook · 喇當大叔的果園</a>
+      <p>南投 · 白姑大山</p>
+    </div>
+    <div class="f-col">
+      <h5>關於</h5>
+      <p>海拔 1700m 友善耕作</p>
+      <p>人工鋤草 · 不施化學農藥</p>
+    </div>
+  </div>
+  <div class="f-bottom">
+    <span>© 2026 喇當大叔的果園 Ratang Farm</span>
+    <span class="lat" style="font-style:italic">Grown high, given freely.</span>
+  </div>
+</footer>
+
+<script>
+// hero load
+window.addEventListener('load',()=>{document.querySelector('.hero').classList.add('loaded')});
+document.querySelector('.hero').classList.add('loaded');
+
+// topbar scrolled state
+const tb=document.getElementById('topbar');
+const onScroll=()=>{tb.classList.toggle('scrolled',window.scrollY>60)};
+onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+
+// reveal on scroll
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:.16,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
