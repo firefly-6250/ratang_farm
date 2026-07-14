@@ -16,9 +16,11 @@
 const SPREADSHEET_ID = '13s8MhC6LmZSA0Brbal7bigI_n4QaJuqWMiSg6BfL1kk';   // ← 換成你的試算表 ID
 const ORDER_SHEET = '訂單';
 const PLUM_ORDER_SHEET = '李子訂單';
+const PEACH_ORDER_SHEET = '水蜜桃訂單';
 const CUSTOMER_SHEET = '老客戶';
 const GROCERY_SHEET = '香菇品項';
 const PLUM_GROCERY_SHEET = '李子品項';
+const PEACH_GROCERY_SHEET = '水蜜桃品項';
 
 // ────────────────────────────────────────
 // doGet：老客戶查詢
@@ -74,8 +76,9 @@ function doPost(e) {
 
     // ── 寫入訂單工作表（依 orderType 分流）──
     const isPlum = payload.orderType === 'plum';
+    const isPeach = payload.orderType === 'peach';
     const orderId = 'ORD' + new Date().getTime();
-    const orderSheet = ss.getSheetByName(isPlum ? PLUM_ORDER_SHEET : ORDER_SHEET);
+    const orderSheet = ss.getSheetByName(isPeach ? PEACH_ORDER_SHEET : (isPlum ? PLUM_ORDER_SHEET : ORDER_SHEET));
 
     // 品項序列化：「特大朵 300g×2, 大朵 150g×1」
     const itemStr = payload.items
@@ -109,7 +112,7 @@ function doPost(e) {
       isPickup ? '埔里自取' : '宅配',   // P 收件方式
       deliveryTime,                    // Q 配送時段（1/2/4）
       isCod ? '貨到付款' : '匯款',      // R 付款方式
-      payload.codFee || 0              // S 物流處理費
+      payload.codFee || payload.shippingFee || 0   // S 物流處理費／運費（水蜜桃為宅配運費）
     ];
 
     // 以 A 欄最後一筆有值的列號 +1 決定寫入位置，
@@ -129,7 +132,7 @@ function doPost(e) {
     orderSheet.getRange(nextRow, 13).setFormula(asText(payload.transferLast5 || ''));
 
     // ── 扣減商品庫存 ──
-    deductInventory(ss, payload.items, isPlum ? PLUM_GROCERY_SHEET : GROCERY_SHEET);
+    deductInventory(ss, payload.items, isPeach ? PEACH_GROCERY_SHEET : (isPlum ? PLUM_GROCERY_SHEET : GROCERY_SHEET));
 
     // ── 更新或新增客戶資料 ──
     updateCustomer(ss, {
@@ -143,8 +146,8 @@ function doPost(e) {
     // 1. 檢查 Email 格式是否正確
     var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailRegex.test(payload.email)) {
-      // 格式正確，發送 HTML 信件
-      sendOrderEmail_HTML(payload.email, orderId);
+      // 格式正確，發送 HTML 信件（依 orderType 選擇模板：plum / peach / 預設香菇）
+      sendOrderEmail_HTML(payload.email, orderId, payload.orderType || '');
     }
     else {
       // 2. 格式不正確，改發簡訊
