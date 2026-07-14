@@ -112,7 +112,7 @@ function doPost(e) {
       isPickup ? '埔里自取' : '宅配',   // P 收件方式
       deliveryTime,                    // Q 配送時段（1/2/4）
       isCod ? '貨到付款' : '匯款',      // R 付款方式
-      payload.codFee || payload.shippingFee || 0   // S 物流處理費／運費（水蜜桃為宅配運費）
+      (Number(payload.codFee) || 0) + (Number(payload.shippingFee) || 0)   // S 物流費用（貨到付款處理費＋宅配運費）
     ];
 
     // 以 A 欄最後一筆有值的列號 +1 決定寫入位置，
