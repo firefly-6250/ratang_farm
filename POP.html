@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>方塊POP！</title>
+<style>
+  :root{
+    --bg:#231a52; --bg2:#160f3d;
+    --panel:#1b1247; --cell:#2e2470; --cell-line:#3a2f85;
+    --ink:#ffffff; --sub:#9d92d0; --gold:#ffc145;
+    --r:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI","Microsoft JhengHei",system-ui,sans-serif;
+    background:radial-gradient(120% 90% at 50% 0%, var(--bg) 0%, var(--bg2) 78%);
+    color:var(--ink);
+    display:flex; flex-direction:column; align-items:center;
+    min-height:100%; padding:14px 12px 26px;
+    overscroll-behavior:none; user-select:none; -webkit-user-select:none;
+    touch-action:pan-y;
+  }
+  .stage{width:min(94vw,430px);display:flex;flex-direction:column;gap:14px}
+
+  /* ── 標題列 ── */
+  header{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-blocks{display:grid;grid-template-columns:repeat(2,16px);grid-auto-rows:16px;gap:3px;transform:rotate(-8deg)}
+  .logo-blocks i{border-radius:4px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.35)}
+  .logo-blocks i:nth-child(1){background:#ff6b81}
+  .logo-blocks i:nth-child(2){background:#ffc145}
+  .logo-blocks i:nth-child(3){background:#4cc9f0;grid-column:1 / span 2;width:35px}
+  h1{font-size:26px;font-weight:900;letter-spacing:2px;text-shadow:0 4px 0 rgba(0,0,0,.35)}
+  h1 em{font-style:normal;color:var(--gold)}
+  .btn-icon{
+    width:42px;height:42px;border:none;border-radius:12px;cursor:pointer;
+    background:var(--panel);color:var(--sub);font-size:19px;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.3);
+  }
+  .btn-icon:active{transform:translateY(2px);box-shadow:none}
+
+  /* ── 分數 ── */
+  .scores{display:flex;gap:12px}
+  .score-card{
+    flex:1;background:var(--panel);border-radius:var(--r);padding:8px 14px;
+    display:flex;flex-direction:column;align-items:center;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.3);
+  }
+  .score-card .lbl{font-size:12px;color:var(--sub);letter-spacing:3px}
+  .score-card .val{font-size:26px;font-weight:900;font-variant-numeric:tabular-nums}
+  #best{color:var(--gold)}
+
+  /* ── 棋盤 ── */
+  .board-wrap{position:relative}
+  #board{
+    display:grid;grid-template-columns:repeat(8,1fr);gap:4px;
+    background:var(--panel);padding:8px;border-radius:16px;
+    box-shadow:inset 0 4px 12px rgba(0,0,0,.45), 0 6px 0 rgba(0,0,0,.28);
+    touch-action:none;
+  }
+  .cell{
+    aspect-ratio:1;border-radius:7px;background:var(--cell);
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.3);
+    transition:background .12s;
+    position:relative;
+  }
+  .cell.filled{
+    background:var(--c);
+    box-shadow:inset 0 -4px 0 rgba(0,0,0,.28), inset 0 2px 0 rgba(255,255,255,.35);
+  }
+  .cell.pop{animation:pop .22s ease-out}
+  @keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .cell.ghost{background:var(--c);opacity:.45;box-shadow:none}
+  .cell.hint-clear{animation:hintPulse .5s ease-in-out infinite alternate}
+  @keyframes hintPulse{from{filter:brightness(1.1)}to{filter:brightness(1.65)}}
+  .cell.clearing{animation:burst .26s ease-in forwards}
+  @keyframes burst{to{transform:scale(0);opacity:0}}
+
+  #fx{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:5}
+  .float-score{
+    position:absolute;font-weight:900;font-size:24px;color:var(--gold);
+    text-shadow:0 3px 0 rgba(0,0,0,.4);transform:translate(-50%,-50%);
+    animation:floatUp .9s ease-out forwards;white-space:nowrap;
+  }
+  @keyframes floatUp{
+    0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}
+    20%{opacity:1;transform:translate(-50%,-60%) scale(1.15)}
+    100%{opacity:0;transform:translate(-50%,-190%) scale(1)}
+  }
+  .combo-tag{
+    position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);
+    font-size:34px;font-weight:900;letter-spacing:1px;color:#fff;
+    text-shadow:0 0 18px rgba(255,193,69,.9),0 4px 0 rgba(0,0,0,.4);
+    animation:slam .8s cubic-bezier(.2,1.6,.4,1) forwards;
+  }
+  @keyframes slam{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(2.6) rotate(-6deg)}
+    30%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg)}
+    75%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-70%) scale(.9) rotate(-3deg)}
+  }
+  .particle{position:absolute;width:8px;height:8px;border-radius:3px;pointer-events:none}
+
+  /* ── 旋轉列 ── */
+  .rot-bar{display:flex;align-items:center;justify-content:space-between}
+  .rot-chip{
+    background:var(--panel);border-radius:10px;padding:8px 14px;
+    font-size:14px;font-weight:700;color:var(--sub);letter-spacing:1px;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.3);
+  }
+  .rot-chip b{color:var(--gold);font-size:17px;margin-left:2px}
+  .rot-chip.deny{animation:shake .3s}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .rot-prog{display:flex;gap:7px;align-items:center}
+  .rot-prog .lbl{font-size:11px;color:var(--sub);letter-spacing:1px;margin-right:2px}
+  .rot-prog i{width:11px;height:11px;border-radius:50%;background:var(--cell);
+    box-shadow:inset 0 2px 3px rgba(0,0,0,.35)}
+  .rot-prog i.on{background:var(--gold);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+
+  /* ── 方塊盤 ── */
+  #tray{display:flex;gap:10px;justify-content:space-between}
+  .slot{
+    flex:1;height:104px;background:var(--panel);border-radius:var(--r);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 3px 8px rgba(0,0,0,.35);
+    touch-action:none;
+  }
+  .slot.hold{
+    position:relative;background:rgba(27,18,71,.55);
+    box-shadow:none;border:2px dashed var(--cell-line);
+  }
+  .hold-lbl{position:absolute;top:5px;left:0;right:0;text-align:center;
+    font-size:11px;color:var(--sub);letter-spacing:3px;pointer-events:none}
+  .slot.hold.drop-target{border-color:var(--gold);background:#2c2166}
+  .piece{display:grid;gap:3px;cursor:grab}
+  .piece i{border-radius:5px;background:var(--c);
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.35)}
+  .piece i.off{visibility:hidden;box-shadow:none}
+  .slot.stuck .piece{opacity:.3;filter:grayscale(.7)}
+  .slot.dragging .piece{opacity:.25}
+
+  #drag{
+    position:fixed;z-index:50;pointer-events:none;display:grid;gap:4px;
+    filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));
+  }
+  #drag i{border-radius:7px;background:var(--c);
+    box-shadow:inset 0 -4px 0 rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.35)}
+  #drag i.off{visibility:hidden}
+
+  /* ── 結束畫面 ── */
+  #overlay{
+    position:absolute;inset:0;border-radius:16px;z-index:10;
+    background:rgba(13,8,38,.88);backdrop-filter:blur(3px);
+    display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  #overlay.show{display:flex;animation:fadeIn .3s ease-out}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  #overlay .go-title{font-size:30px;font-weight:900;letter-spacing:4px}
+  #overlay .go-score{font-size:44px;font-weight:900;color:var(--gold);text-shadow:0 4px 0 rgba(0,0,0,.4)}
+  #overlay .go-best{color:var(--sub);font-size:14px;letter-spacing:2px}
+  #overlay .new-record{color:#3edc97;font-weight:700;letter-spacing:2px;animation:hintPulse .5s infinite alternate}
+  .btn-main{
+    margin-top:8px;border:none;cursor:pointer;
+    font-family:inherit;font-size:18px;font-weight:900;letter-spacing:3px;color:#3b1d00;
+    background:linear-gradient(#ffd36e,#ffb034);padding:13px 34px;border-radius:14px;
+    box-shadow:0 5px 0 #b06a00;
+  }
+  .btn-main:active{transform:translateY(4px);box-shadow:0 1px 0 #b06a00}
+
+  footer{color:var(--sub);font-size:12px;letter-spacing:1px;text-align:center;opacity:.7}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <div class="logo">
+      <div class="logo-blocks" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h1>方塊<em>POP</em>！</h1>
+    </div>
+    <button class="btn-icon" id="muteBtn" aria-label="音效開關">🔊</button>
+  </header>
+
+  <div class="scores">
+    <div class="score-card"><span class="lbl">分數</span><span class="val" id="score">0</span></div>
+    <div class="score-card"><span class="lbl">最高分</span><span class="val" id="best">0</span></div>
+  </div>
+
+  <div class="board-wrap">
+    <div id="board" aria-label="遊戲棋盤"></div>
+    <div id="fx"></div>
+    <div id="overlay">
+      <div class="go-title">遊戲結束</div>
+      <div class="go-score" id="finalScore">0</div>
+      <div class="go-best" id="finalBest"></div>
+      <button class="btn-main" id="restartBtn">再玩一次</button>
+    </div>
+  </div>
+
+  <div class="rot-bar">
+    <div class="rot-chip" id="rotChip">🔄 旋轉<b id="rotCount">×1</b></div>
+    <div class="rot-prog" id="rotProg" title="每累積消除 5 條，+1 次旋轉">
+      <span class="lbl">消5條+1</span><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+
+  <div id="tray">
+    <div class="slot hold" data-i="H"><span class="hold-lbl">暫存</span></div>
+    <div class="slot" data-i="0"></div>
+    <div class="slot" data-i="1"></div>
+    <div class="slot" data-i="2"></div>
+  </div>
+
+  <footer>拖曳放置方塊｜點一下方塊＝旋轉｜拖進暫存格可先保留</footer>
+</div>
+
+<script>
+"use strict";
+const GRID = 8;
+const COLORS = ['#ff6b81','#ffc145','#3edc97','#4cc9f0','#b388ff','#ff9f45','#f468c8'];
+
+/* 形狀：cells=[列,行]，col=顏色索引，w=出現權重 */
+const SHAPES = [
+  {c:[[0,0]], col:6, w:2},
+  {c:[[0,0],[0,1]], col:1, w:3},
+  {c:[[0,0],[1,0]], col:1, w:3},
+  {c:[[0,0],[0,1],[0,2]], col:2, w:3},
+  {c:[[0,0],[1,0],[2,0]], col:2, w:3},
+  {c:[[0,0],[0,1],[0,2],[0,3]], col:3, w:2},
+  {c:[[0,0],[1,0],[2,0],[3,0]], col:3, w:2},
+  {c:[[0,0],[0,1],[0,2],[0,3],[0,4]], col:0, w:1},
+  {c:[[0,0],[1,0],[2,0],[3,0],[4,0]], col:0, w:1},
+  {c:[[0,0],[0,1],[1,0],[1,1]], col:4, w:3},
+  {c:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]], col:5, w:1},
+  {c:[[0,0],[1,0],[1,1]], col:2, w:2},
+  {c:[[0,0],[0,1],[1,1]], col:2, w:2},
+  {c:[[0,1],[1,0],[1,1]], col:2, w:2},
+  {c:[[0,0],[0,1],[1,0]], col:2, w:2},
+  {c:[[0,0],[1,0],[2,0],[2,1],[2,2]], col:4, w:1.5},
+  {c:[[0,0],[0,1],[0,2],[1,0],[2,0]], col:4, w:1.5},
+  {c:[[0,2],[1,2],[2,0],[2,1],[2,2]], col:4, w:1.5},
+  {c:[[0,0],[0,1],[0,2],[1,2],[2,2]], col:4, w:1.5},
+  {c:[[0,0],[0,1],[0,2],[1,1]], col:0, w:1.5},
+  {c:[[0,1],[1,0],[1,1],[1,2]], col:0, w:1.5},
+  {c:[[0,0],[0,1],[1,0],[1,1],[0,2],[1,2]], col:5, w:1},
+  {c:[[0,0],[0,1],[1,0],[1,1],[2,0],[2,1]], col:5, w:1},
+];
+const TOTAL_W = SHAPES.reduce((s,x)=>s+x.w,0);
+
+let board = new Array(GRID*GRID).fill(0);   // 0=空，否則顏色索引+1
+let tray = [null,null,null];
+let hold = null;                            // 暫存格
+let rotCharges = 1, lineProg = 0;           // 旋轉次數／累積消除進度（每5條+1）
+let score = 0, best = +(localStorage.getItem('bp-best')||0);
+let combo = 0, gameOver = false;
+let muted = localStorage.getItem('bp-mute')==='1';
+
+const $ = s=>document.querySelector(s);
+const boardEl=$('#board'), fxEl=$('#fx'), trayEl=$('#tray'), overlayEl=$('#overlay');
+const scoreEl=$('#score'), bestEl=$('#best'), muteBtn=$('#muteBtn');
+const holdSlotEl=$('.slot.hold'), rotChipEl=$('#rotChip'), rotCountEl=$('#rotCount'), rotProgEl=$('#rotProg');
+const traySlots=[...document.querySelectorAll('.slot:not(.hold)')];
+
+/* ── 音效（WebAudio 合成，無外部檔案） ── */
+let AC=null;
+function beep(freq,dur=.08,type='square',vol=.12,delay=0){
+  if(muted) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    const t = AC.currentTime + delay;
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.connect(g).connect(AC.destination);
+    o.start(t); o.stop(t+dur+.02);
+  }catch(e){}
+}
+const sfx={
+  pick:  ()=>beep(340,.05,'square',.08),
+  rotate:()=>{beep(500,.05,'square',.1);beep(700,.06,'square',.1,.05)},
+  charge:()=>{beep(660,.08,'triangle',.14);beep(990,.12,'triangle',.14,.08)},
+  place: ()=>{beep(220,.06);beep(330,.07,'square',.1,.04)},
+  clear: n=>{[523,659,784,1047,1319].slice(0,2+n*2).forEach((f,i)=>beep(f,.1,'triangle',.14,i*.06))},
+  bad:   ()=>beep(140,.1,'sawtooth',.07),
+  over:  ()=>{[392,311,262,196].forEach((f,i)=>beep(f,.22,'triangle',.13,i*.16))},
+};
+function setMute(m){
+  muted=m; localStorage.setItem('bp-mute',m?'1':'0');
+  muteBtn.textContent = m?'🔇':'🔊';
+}
+muteBtn.addEventListener('click',()=>setMute(!muted));
+setMute(muted);
+
+/* ── 棋盤建立 ── */
+const cellEls=[];
+for(let i=0;i<GRID*GRID;i++){
+  const d=document.createElement('div');
+  d.className='cell';
+  boardEl.appendChild(d); cellEls.push(d);
+}
+function paintCell(i){
+  const v=board[i], el=cellEls[i];
+  el.className='cell'+(v?' filled':'');
+  if(v) el.style.setProperty('--c',COLORS[v-1]); else el.style.removeProperty('--c');
+}
+function paintAll(){for(let i=0;i<board.length;i++)paintCell(i)}
+
+/* ── 方塊生成與繪製 ── */
+function randomShape(){
+  let r=Math.random()*TOTAL_W;
+  for(const s of SHAPES){ if((r-=s.w)<=0) return {c:s.c, col:s.col}; }
+  return {c:SHAPES[0].c, col:SHAPES[0].col};
+}
+/* 順時針旋轉 90° */
+function rotCells(cells){
+  let R=0; for(const[r] of cells) R=Math.max(R,r);
+  return cells.map(([r,c])=>[c, R-r]);
+}
+function rotateShape(sh){ sh.c = rotCells(sh.c); }
+function sameCells(a,b){
+  if(a.length!==b.length) return false;
+  const s=new Set(a.map(([r,c])=>r+','+c));
+  return b.every(([r,c])=>s.has(r+','+c));
+}
+function shapeDims(s){
+  let R=0,C=0; for(const[r,c] of s.c){R=Math.max(R,r);C=Math.max(C,c)}
+  return [R+1,C+1];
+}
+function buildPieceEl(shape,cellPx,gap){
+  const [rows,cols]=shapeDims(shape);
+  const el=document.createElement('div');
+  el.style.gridTemplateColumns=`repeat(${cols},${cellPx}px)`;
+  el.style.gridAutoRows=cellPx+'px';
+  el.style.gap=gap+'px';
+  const set=new Set(shape.c.map(([r,c])=>r*cols+c));
+  for(let i=0;i<rows*cols;i++){
+    const b=document.createElement('i');
+    if(set.has(i)) b.style.setProperty('--c',COLORS[shape.col]);
+    else b.className='off';
+    el.appendChild(b);
+  }
+  return el;
+}
+function renderSlot(slot,sh){
+  slot.querySelector('.piece')?.remove();
+  slot.classList.remove('stuck','dragging');
+  if(!sh) return;
+  const [rows,cols]=shapeDims(sh);
+  const px=Math.min(18, Math.floor(80/cols), Math.floor(80/rows));
+  const p=buildPieceEl(sh,px,3);
+  p.className='piece';
+  slot.appendChild(p);
+  if(!canFitAnywhere(sh)) slot.classList.add('stuck');
+}
+function renderTray(){
+  traySlots.forEach((slot,i)=>renderSlot(slot,tray[i]));
+  renderSlot(holdSlotEl,hold);
+}
+function updateRotUI(){
+  rotCountEl.textContent='×'+rotCharges;
+  [...rotProgEl.querySelectorAll('i')].forEach((d,i)=>d.classList.toggle('on',i<lineProg));
+}
+function refillTray(){ tray=[randomShape(),randomShape(),randomShape()]; }
+
+/* ── 規則判定 ── */
+function canPlace(shape,r0,c0){
+  for(const[r,c] of shape.c){
+    const rr=r0+r, cc=c0+c;
+    if(rr<0||cc<0||rr>=GRID||cc>=GRID||board[rr*GRID+cc]) return false;
+  }
+  return true;
+}
+function canFitAnywhere(shape){
+  const [rows,cols]=shapeDims(shape);
+  for(let r=0;r<=GRID-rows;r++)
+    for(let c=0;c<=GRID-cols;c++)
+      if(canPlace(shape,r,c)) return true;
+  return false;
+}
+function allPieces(){ return tray.filter(Boolean).concat(hold?[hold]:[]); }
+/* 有沒有任何一步可走（含用旋轉次數轉出可放的形狀） */
+function anyMoveAvailable(){
+  for(const p of allPieces()) if(canFitAnywhere(p)) return true;
+  if(rotCharges>0){
+    for(const p of allPieces()){
+      let cells=p.c;
+      for(let k=0;k<Math.min(3,rotCharges);k++){
+        cells=rotCells(cells);
+        if(canFitAnywhere({c:cells})) return true;
+      }
+    }
+  }
+  return false;
+}
+function fullLines(b){
+  const rows=[],cols=[];
+  for(let r=0;r<GRID;r++){let f=true;for(let c=0;c<GRID;c++)if(!b[r*GRID+c]){f=false;break}if(f)rows.push(r)}
+  for(let c=0;c<GRID;c++){let f=true;for(let r=0;r<GRID;r++)if(!b[r*GRID+c]){f=false;break}if(f)cols.push(c)}
+  return {rows,cols};
+}
+
+/* ── 特效 ── */
+function boardRect(){return boardEl.getBoundingClientRect()}
+function cellCenter(i){
+  const el=cellEls[i].getBoundingClientRect(), br=boardRect();
+  return [el.left-br.left+el.width/2, el.top-br.top+el.height/2];
+}
+function floatScore(text,x,y){
+  const d=document.createElement('div');
+  d.className='float-score'; d.textContent=text;
+  d.style.left=x+'px'; d.style.top=y+'px';
+  fxEl.appendChild(d);
+  setTimeout(()=>d.remove(),950);
+}
+function comboTag(n){
+  const d=document.createElement('div');
+  d.className='combo-tag'; d.textContent=`COMBO ×${n}！`;
+  fxEl.appendChild(d);
+  setTimeout(()=>d.remove(),850);
+}
+function particles(i,color){
+  const [x,y]=cellCenter(i);
+  for(let k=0;k<4;k++){
+    const p=document.createElement('div');
+    p.className='particle'; p.style.background=color;
+    p.style.left=x+'px'; p.style.top=y+'px';
+    fxEl.appendChild(p);
+    const a=Math.random()*Math.PI*2, dist=30+Math.random()*55;
+    p.animate([
+      {transform:'translate(-50%,-50%) scale(1)',opacity:1},
+      {transform:`translate(${Math.cos(a)*dist-4}px,${Math.sin(a)*dist-4}px) scale(.2) rotate(${Math.random()*260-130}deg)`,opacity:0}
+    ],{duration:420+Math.random()*260,easing:'cubic-bezier(.1,.6,.4,1)'});
+    setTimeout(()=>p.remove(),700);
+  }
+}
+
+/* ── 放置與消除 ── */
+function place(src,r0,c0){
+  const shape = src.isHold ? hold : tray[src.idx];
+  const colorIdx=shape.col+1;
+  for(const[r,c] of shape.c){
+    const i=(r0+r)*GRID+(c0+c);
+    board[i]=colorIdx;
+    paintCell(i);
+    cellEls[i].classList.add('pop');
+    setTimeout(()=>cellEls[i].classList.remove('pop'),240);
+  }
+  addScore(shape.c.length);
+  sfx.place();
+  if(src.isHold) hold=null; else tray[src.idx]=null;
+
+  const {rows,cols}=fullLines(board);
+  const lines=rows.length+cols.length;
+  if(lines>0){
+    combo++;
+    const toClear=new Set();
+    rows.forEach(r=>{for(let c=0;c<GRID;c++)toClear.add(r*GRID+c)});
+    cols.forEach(c=>{for(let r=0;r<GRID;r++)toClear.add(r*GRID+c)});
+    const pts=(10*lines*(lines+1)/2)*Math.max(1,combo);
+    sfx.clear(lines);
+    toClear.forEach(i=>{
+      cellEls[i].classList.add('clearing');
+      particles(i,COLORS[board[i]-1]);
+    });
+    const cx=boardRect().width/2;
+    let cy=boardRect().height/2;
+    if(rows.length&&!cols.length) cy=cellCenter(rows[0]*GRID)[1];
+    floatScore('+'+pts,cx,cy);
+    if(combo>=2) comboTag(combo);
+    // 累積消除 → 旋轉次數
+    lineProg+=lines;
+    while(lineProg>=5){
+      lineProg-=5; rotCharges++;
+      sfx.charge();
+      floatScore('🔄 +1 旋轉！',cx,cy+46);
+    }
+    updateRotUI();
+    setTimeout(()=>{
+      toClear.forEach(i=>{board[i]=0;paintCell(i)});
+      afterMove();
+    },280);
+    addScore(pts);
+  }else{
+    combo=0;
+    afterMove();
+  }
+}
+function addScore(n){
+  score+=n;
+  scoreEl.textContent=score;
+  if(score>best){best=score;bestEl.textContent=best;localStorage.setItem('bp-best',best)}
+}
+function afterMove(){
+  if(tray.every(s=>!s)) refillTray();
+  renderTray();
+  if(!anyMoveAvailable()) endGame();
+}
+function endGame(){
+  gameOver=true;
+  sfx.over();
+  $('#finalScore').textContent=score;
+  const isRecord = score>=best && score>0;
+  $('#finalBest').innerHTML = isRecord
+    ? '<span class="new-record">★ 新紀錄！ ★</span>'
+    : `最高分 ${best}`;
+  setTimeout(()=>overlayEl.classList.add('show'),450);
+}
+function newGame(){
+  board.fill(0); score=0; combo=0; gameOver=false;
+  hold=null; rotCharges=1; lineProg=0;
+  scoreEl.textContent='0'; bestEl.textContent=best;
+  overlayEl.classList.remove('show');
+  refillTray(); paintAll(); renderTray(); updateRotUI();
+}
+$('#restartBtn').addEventListener('click',newGame);
+
+/* ── 拖曳 ── */
+let drag=null; // {slotIdx, shape, el, pw, ph, lift, ghost:[]}
+function clearGhost(){
+  if(!drag) return;
+  drag.ghost.forEach(i=>{
+    cellEls[i].classList.remove('ghost','hint-clear');
+    paintCell(i);
+  });
+  cellEls.forEach(el=>el.classList.remove('hint-clear'));
+  drag.ghost=[];
+}
+function boardCellSize(){
+  const br=boardRect();
+  return (br.width-16-4*(GRID-1))/GRID; // padding 8*2、gap 4
+}
+function dragOrigin(){
+  // 拖曳元素左上角 → 棋盤格座標
+  const br=boardRect(), cs=boardCellSize(), gap=4;
+  const x=drag.x, y=drag.y;
+  const c=Math.round((x-br.left-8)/(cs+gap));
+  const r=Math.round((y-br.top-8)/(cs+gap));
+  return [r,c];
+}
+function overHold(x,y){
+  const r=holdSlotEl.getBoundingClientRect();
+  return x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6;
+}
+function updateDrag(clientX,clientY){
+  drag.lastX=clientX; drag.lastY=clientY;
+  if(Math.hypot(clientX-drag.startX,clientY-drag.startY)>8) drag.moved=true;
+  drag.x=clientX-drag.pw/2;
+  drag.y=clientY-drag.ph/2-drag.lift;
+  drag.el.style.left=drag.x+'px';
+  drag.el.style.top=drag.y+'px';
+  clearGhost();
+  drag.valid=null;
+  // 懸停在暫存格上（來源是托盤才能存入）
+  const hovHold = !drag.src.isHold && overHold(clientX,clientY);
+  holdSlotEl.classList.toggle('drop-target',hovHold);
+  if(hovHold) return;
+  const [r,c]=dragOrigin();
+  if(canPlace(drag.shape,r,c)){
+    drag.valid=[r,c];
+    const sim=board.slice();
+    for(const[rr,cc] of drag.shape.c){
+      const i=(r+rr)*GRID+(c+cc);
+      sim[i]=drag.shape.col+1;
+      cellEls[i].classList.add('ghost');
+      cellEls[i].style.setProperty('--c',COLORS[drag.shape.col]);
+      drag.ghost.push(i);
+    }
+    // 預告會消除的行列
+    const {rows,cols}=fullLines(sim);
+    rows.forEach(rr=>{for(let cc=0;cc<GRID;cc++)cellEls[rr*GRID+cc].classList.add('hint-clear')});
+    cols.forEach(cc=>{for(let rr=0;rr<GRID;rr++)cellEls[rr*GRID+cc].classList.add('hint-clear')});
+  }
+}
+trayEl.addEventListener('pointerdown',e=>{
+  if(gameOver||drag) return;
+  const slot=e.target.closest('.slot');
+  if(!slot) return;
+  const isHold=slot.dataset.i==='H';
+  const idx=isHold?-1:+slot.dataset.i;
+  const shape=isHold?hold:tray[idx];
+  if(!shape) return;
+  e.preventDefault();
+  const cs=boardCellSize(), gap=4;
+  const [rows,cols]=shapeDims(shape);
+  const el=buildPieceEl(shape,cs,gap);
+  el.id='drag';
+  document.body.appendChild(el);
+  drag={
+    src:{isHold,idx}, shape, el, ghost:[], valid:null,
+    startX:e.clientX, startY:e.clientY, moved:false,
+    pw:cols*cs+(cols-1)*gap,
+    ph:rows*cs+(rows-1)*gap,
+    lift: e.pointerType==='touch'?70:10,
+  };
+  slot.classList.add('dragging');
+  sfx.pick();
+  updateDrag(e.clientX,e.clientY);
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',onUp);
+  window.addEventListener('pointercancel',onUp);
+});
+function onMove(e){ if(drag){e.preventDefault();updateDrag(e.clientX,e.clientY)} }
+function onUp(){
+  if(!drag) return;
+  window.removeEventListener('pointermove',onMove);
+  window.removeEventListener('pointerup',onUp);
+  window.removeEventListener('pointercancel',onUp);
+  clearGhost();
+  drag.el.remove();
+  holdSlotEl.classList.remove('drop-target');
+  const d=drag; drag=null;
+  (d.src.isHold?holdSlotEl:traySlots[d.src.idx]).classList.remove('dragging');
+  if(!d.moved){ tryRotate(d.src); return; }              // 點一下 → 旋轉
+  if(!d.src.isHold && overHold(d.lastX,d.lastY)){ doHold(d.src.idx); return; }  // 拖進暫存格
+  if(d.valid){ place(d.src,d.valid[0],d.valid[1]); return; }
+  if(!d.src.isHold||!overHold(d.lastX,d.lastY)) sfx.bad(); // 放不下，方塊彈回
+}
+/* 點一下方塊 → 消耗 1 次旋轉，順時針轉 90° */
+function tryRotate(src){
+  const shape=src.isHold?hold:tray[src.idx];
+  if(!shape) return;
+  const rotated=rotCells(shape.c);
+  if(sameCells(shape.c,rotated)){ sfx.rotate(); return; } // 正方形轉了沒差，不扣次數
+  if(rotCharges<=0){
+    sfx.bad();
+    rotChipEl.classList.remove('deny'); void rotChipEl.offsetWidth;
+    rotChipEl.classList.add('deny');
+    return;
+  }
+  shape.c=rotated;
+  rotCharges--; updateRotUI();
+  sfx.rotate();
+  renderTray();
+  if(!anyMoveAvailable()) endGame();
+}
+/* 拖進暫存格：存入；若暫存格已有方塊則交換回原本的托盤格 */
+function doHold(idx){
+  const prev=hold;
+  hold=tray[idx];
+  tray[idx]=prev;
+  sfx.pick();
+  if(tray.every(s=>!s)) refillTray();
+  renderTray();
+  if(!anyMoveAvailable()) endGame();
+}
+
+newGame();
+</script>
+</body>
+</html>
