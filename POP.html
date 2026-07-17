@@ -499,7 +499,24 @@ function addScore(n){
 function afterMove(){
   if(tray.every(s=>!s)) refillTray();
   renderTray();
-  if(!anyMoveAvailable()) endGame();
+  checkEnd();
+}
+/* 無路可走時：若暫存格有空位，自動把托盤積木移入暫存救援；救不了才結束 */
+function checkEnd(){
+  if(anyMoveAvailable()) return;
+  if(!hold){
+    const idx=tray.findIndex(Boolean);
+    if(idx>=0){
+      hold=tray[idx]; tray[idx]=null;
+      if(tray.every(s=>!s)) refillTray();
+      renderTray();
+      const br=boardRect();
+      floatScore('已自動暫存！',br.width/2,br.height-40);
+      sfx.pick();
+      if(anyMoveAvailable()) return;
+    }
+  }
+  endGame();
 }
 function endGame(){
   gameOver=true;
@@ -637,7 +654,7 @@ function tryRotate(src){
   rotCharges--; updateRotUI();
   sfx.rotate();
   renderTray();
-  if(!anyMoveAvailable()) endGame();
+  checkEnd();
 }
 /* 拖進暫存格：存入；若暫存格已有方塊則交換回原本的托盤格 */
 function doHold(idx){
@@ -647,7 +664,7 @@ function doHold(idx){
   sfx.pick();
   if(tray.every(s=>!s)) refillTray();
   renderTray();
-  if(!anyMoveAvailable()) endGame();
+  checkEnd();
 }
 
 newGame();
