@@ -204,10 +204,20 @@ function sendTwSms(mobile, message) {
   // 根據手冊，message 需要 urlencode，但在 GAS 的 payload 中通常會自動處理，
   // 若使用 GET 方法拼接 URL 則必須手動 encodeURIComponent。
   // 這裡使用 POST 方法比較乾淨。
+  // 帳密存放於「專案設定 → 指令碼屬性」，不可寫死在程式碼中
+  // （本檔案會推送到公開的 GitHub repo）
+  var props = PropertiesService.getScriptProperties();
+  var username = props.getProperty('TWSMS_USERNAME');
+  var password = props.getProperty('TWSMS_PASSWORD');
+  if (!username || !password) {
+    console.error(">> 簡訊發送失敗：尚未設定指令碼屬性 TWSMS_USERNAME / TWSMS_PASSWORD");
+    return;
+  }
+
   message = message + "(簡訊商:twsms)";
   var payload = {
-    "username": "mamaratang",
-    "password": "2lclgeu07e6chj3",
+    "username": username,
+    "password": password,
     "mobile": mobile,
     "message": message, // GAS UrlFetchApp 會自動處理 form-data 的編碼
     "drurl": "",        // (選填) 回傳狀態網址
@@ -257,30 +267,6 @@ function testSendSms() {
 }
 
 
-// ---------------------------------------------------
-// 📱 發送簡訊的功能 (需要串接付費 API)
-// ---------------------------------------------------
-function sendMitakeSMS(phoneNumber, message) {
-  var apiUrl = "https://smsapi.mitake.com.tw/api/mtk/SmSend?&CharsetURL=UTF-8";
-  var payload = {
-    "username": "01014220A",
-    "password": "",
-    "dstaddr": phoneNumber,
-    "smbody": message
-  };
-
-  var options = {
-    "method": "post",
-    "payload": payload
-  };
-
-  try {
-    UrlFetchApp.fetch(apiUrl, options); // 解開註解才會真的發送
-    console.log(">> 簡訊 API 呼叫成功，電話:" + phoneNumber + "，訊息:" + message);
-  } catch (e) {
-    console.error(">> 簡訊發送失敗: " + e.message);
-  }
-}
 
 function test() {
   sendOrderEmail_HTML("yabung117@gmail.com", "ORD1779007059686", "plum")
