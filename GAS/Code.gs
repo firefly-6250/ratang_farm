@@ -17,10 +17,12 @@ const SPREADSHEET_ID = '13s8MhC6LmZSA0Brbal7bigI_n4QaJuqWMiSg6BfL1kk';   // ← 
 const ORDER_SHEET = '訂單';
 const PLUM_ORDER_SHEET = '李子訂單';
 const PEACH_ORDER_SHEET = '水蜜桃訂單';
+const VEGETABLE_ORDER_SHEET = '蔬菜箱訂單';
 const CUSTOMER_SHEET = '老客戶';
 const GROCERY_SHEET = '香菇品項';
 const PLUM_GROCERY_SHEET = '李子品項';
 const PEACH_GROCERY_SHEET = '水蜜桃品項';
+const VEGETABLE_GROCERY_SHEET = '蔬菜箱品項';
 
 // ────────────────────────────────────────
 // doGet：老客戶查詢
@@ -75,10 +77,16 @@ function doPost(e) {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
     // ── 寫入訂單工作表（依 orderType 分流）──
-    const isPlum = payload.orderType === 'plum';
-    const isPeach = payload.orderType === 'peach';
+    // 未列出的 orderType（含空值）＝香菇，維持舊版行為
+    const SHEETS_BY_TYPE = {
+      plum:      { order: PLUM_ORDER_SHEET,      grocery: PLUM_GROCERY_SHEET },
+      peach:     { order: PEACH_ORDER_SHEET,     grocery: PEACH_GROCERY_SHEET },
+      vegetable: { order: VEGETABLE_ORDER_SHEET, grocery: VEGETABLE_GROCERY_SHEET }
+    };
+    const target = SHEETS_BY_TYPE[payload.orderType] || { order: ORDER_SHEET, grocery: GROCERY_SHEET };
     const orderId = 'ORD' + new Date().getTime();
-    const orderSheet = ss.getSheetByName(isPeach ? PEACH_ORDER_SHEET : (isPlum ? PLUM_ORDER_SHEET : ORDER_SHEET));
+    const orderSheet = ss.getSheetByName(target.order);
+    if (!orderSheet) return jsonResp({ success: false, message: '找不到工作表：' + target.order });
 
     // 品項序列化：「特大朵 300g×2, 大朵 150g×1」
     const itemStr = payload.items
@@ -132,7 +140,7 @@ function doPost(e) {
     orderSheet.getRange(nextRow, 13).setFormula(asText(payload.transferLast5 || ''));
 
     // ── 扣減商品庫存 ──
-    deductInventory(ss, payload.items, isPeach ? PEACH_GROCERY_SHEET : (isPlum ? PLUM_GROCERY_SHEET : GROCERY_SHEET));
+    deductInventory(ss, payload.items, target.grocery);
 
     // ── 更新或新增客戶資料 ──
     updateCustomer(ss, {

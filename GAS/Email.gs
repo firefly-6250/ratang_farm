@@ -292,7 +292,7 @@ function test() {
  * 訂單成立通知信
  * @param {string} targetEmail 收件者 Email
  * @param {string} orderId     訂單編號
- * @param {string} orderType   'plum'＝李子、'peach'＝水蜜桃，其他（空值）＝香菇；
+ * @param {string} orderType   'plum'＝李子、'peach'＝水蜜桃、'vegetable'＝蔬菜箱，其他（空值）＝香菇；
  *                             舊版傳入 truthy 布林值視同 'plum'
  */
 function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
@@ -454,6 +454,73 @@ function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
 </div>
 `;
 
+    var htmlBody_vegetable = `
+<div style="margin:0; padding:0; background-color:#f8f5f0;">
+  <div style="max-width:620px; margin:60px auto; padding:0 24px;">
+
+    <div style="
+      background-color:#ffffff;
+      border-radius:18px;
+      padding:48px 40px;
+      box-shadow:0 12px 32px rgba(0,0,0,0.06);
+      font-family: 'Microsoft JhengHei', Arial, sans-serif;
+      line-height:1.9;
+      color:#2b2b2b;
+    ">
+
+      <div style="text-align:center; margin-bottom:40px;">
+        <img src="${logoUrl}" style="max-width:140px;">
+      </div>
+
+      <p style="font-size:16px;">
+        親愛的朋友，您好：
+      </p>
+
+      <p>
+        非常感謝您的訂購，我們已經確實收到您的訂單了！
+      </p>
+
+      <p>
+        這些蔬菜來自南投縣仁愛鄉力行村的馬烈霸部落，座落於海拔約 1,600 公尺的合歡山西側山腰。白天享有充足陽光，清晨則迎來冷冽的露水與純淨空氣，極致的溫差養育出脆口清甜、充滿生命力的時令蔬果。
+      </p>
+
+      <p>
+        田裡引的是合歡山溪的清冽甘泉，每一種蔬菜都是部落村民一畦一畦耕種出來的。
+      </p>
+
+      <p>
+        我們正依採收順序安排排單出貨，出貨當天會再發送通知給您，請您安心期待，並等候黑貓宅配到貨通知。收到後請儘早冷藏保存，趁鮮享用風味最好。
+      </p>
+
+      <p>
+        希望這一箱高山的清甜，能為您的餐桌帶來最樸實、真美好的體驗。再次謝謝您的支持。
+      </p>
+
+      <p style="margin-top:40px;">
+        祝 平安<br>
+        <strong style="font-size:18px; letter-spacing:2px;">喇當大叔的果園</strong> 敬上
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+
+      <div style="font-size: 14px; color: #666666; line-height: 1.6;">
+        <p style="margin: 0 0 8px 0;">
+        <strong>聯絡資訊：</strong>
+        </p>
+        <p style="margin: 0;">
+          此信件為系統自動發送，若有任何疑問，請私訊
+          <a href="https://www.facebook.com/RatangsFruitFarm" target="_blank" style="color: #1877f2; text-decoration: underline; font-weight: bold;">
+            「喇當大叔的果園」臉書粉絲專頁
+          </a>，並請於私訊時提供<strong>收件人姓名</strong>，謝謝您。
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+`;
+
     var htmlBody = `
 <div style="margin:0; padding:0; background-color:#f8f5f0;">
   <div style="max-width:620px; margin:60px auto; padding:0 24px;">
@@ -518,6 +585,8 @@ function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
     var htmlBodyToSend = htmlBody;
     if (orderType === 'peach') {
       htmlBodyToSend = htmlBody_peach;
+    } else if (orderType === 'vegetable') {
+      htmlBodyToSend = htmlBody_vegetable;
     } else if (orderType === 'plum' || (orderType && orderType !== '')) {
       htmlBodyToSend = htmlBody_plum;
     }
