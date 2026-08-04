@@ -56,9 +56,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink)
 .products-head .meta{font-size:11.5px;letter-spacing:1.5px;color:var(--muted)}
 .product-card{background:var(--paper);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow-card);border:1px solid rgba(163,190,138,.5);transition:transform .25s ease}
 .product-card:hover{transform:translateY(-2px)}
-.product-img{position:relative;width:100%;aspect-ratio:16/11;overflow:hidden;background:var(--bg-deep)}
-.product-img img{width:100%;height:100%;object-fit:cover;display:block}
+.product-img{position:relative;width:100%;overflow:hidden;background:var(--paper);line-height:0}
+.product-img img{width:100%;height:auto;max-height:min(78vh,620px);object-fit:contain;display:block}
 .product-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(12,25,8,.55) 100%)}
+.product-img:not(:has(img)){min-height:96px;background:var(--bg-deep)}
 .product-tag{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;gap:6px;padding:6px 12px;background:rgba(251,253,246,.95);border-radius:999px;font-size:11px;letter-spacing:1.5px;color:var(--forest);font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .product-tag.ember{color:#fff;background:var(--ember)}
 .product-tag .dot{width:5px;height:5px;border-radius:50%;background:currentColor;align-self:center}
@@ -204,7 +205,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <span class="badge-elev">海拔約 1600m</span>
 </div>
 <div class="hero-content">
-<div class="eyebrow">Highland vegetable box · Malieba</div>
+<div class="eyebrow">Highland vegetable box · Malipa</div>
 <h1>高山<br>蔬果箱</h1>
 <div class="hero-meta">
 <div><strong>極致溫差</strong>脆口清甜有生命力</div>
@@ -240,13 +241,14 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="notice"><strong>蔬果箱特別說明</strong><br>為確保品質，蔬果箱內容物由當季採收品項搭配，恕無法更改內容物，敬請見諒。<br>如有任何疑問，歡迎透過粉專私訊或電話與我們聯繫。</div>
 <div class="contact-card box-list" style="margin:0 0 18px">
 <h3>高海拔蔬菜箱 · 內容物</h3>
-<div class="contact-row"><span class="k">高山高麗菜</span><span>一顆</span></div>
-<div class="contact-row"><span class="k">柴燒椴木香菇</span><span>一包（約 30 克）</span></div>
-<div class="contact-row"><span class="k">牛番茄</span><span>？斤（約？顆）</span></div>
-<div class="contact-row"><span class="k">櫛瓜</span><span>？斤（約？條）</span></div>
-<div class="contact-row"><span class="k">敏豆</span><span>？斤</span></div>
-<div class="contact-row"><span class="k">青椒</span><span>？斤（約？顆）</span></div>
-<div class="contact-note">共六項蔬菜 · 含運：？？？？元（價格已包含運費）</div>
+<div class="contact-row"><span class="k">高山高麗菜</span><span>1顆</span></div>
+<div class="contact-row"><span class="k">櫛瓜</span><span>4條</span></div>
+<div class="contact-row"><span class="k">牛番茄</span><span>4顆</span></div>
+<div class="contact-row"><span class="k">青椒</span><span>5條</span></div>
+<div class="contact-row"><span class="k">醜豆</span><span>6兩</span></div>
+<div class="contact-row"><span class="k">敏豆</span><span>半斤</span></div>
+<div class="contact-row"><span class="k">柴燒椴木香菇</span><span>一包（約 35 克）</span></div>
+<div class="contact-note">共六項· 含運價：1250元（貨到付款+30）</div>
 </div>
 <div id="productList"><div class="loading"><span class="spinner"></span>商品載入中…</div></div>
 </section>
