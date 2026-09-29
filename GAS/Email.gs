@@ -278,7 +278,7 @@ function test() {
  * 訂單成立通知信
  * @param {string} targetEmail 收件者 Email
  * @param {string} orderId     訂單編號
- * @param {string} orderType   'plum'＝李子、'peach'＝水蜜桃、'vegetable'＝蔬菜箱，其他（空值）＝香菇；
+ * @param {string} orderType   'plum'＝李子、'peach'＝水蜜桃、'vegetable'＝蔬菜箱、'persimmon'＝柿子，其他（空值）＝香菇；
  *                             舊版傳入 truthy 布林值視同 'plum'
  */
 function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
@@ -440,6 +440,73 @@ function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
 </div>
 `;
 
+    var htmlBody_persimmon = `
+<div style="margin:0; padding:0; background-color:#f8f5f0;">
+  <div style="max-width:620px; margin:60px auto; padding:0 24px;">
+
+    <div style="
+      background-color:#ffffff;
+      border-radius:18px;
+      padding:48px 40px;
+      box-shadow:0 12px 32px rgba(0,0,0,0.06);
+      font-family: 'Microsoft JhengHei', Arial, sans-serif;
+      line-height:1.9;
+      color:#2b2b2b;
+    ">
+
+      <div style="text-align:center; margin-bottom:40px;">
+        <img src="${logoUrl}" style="max-width:140px;">
+      </div>
+
+      <p style="font-size:16px;">
+        親愛的朋友，您好：
+      </p>
+
+      <p>
+        非常感謝您的訂購，我們已經確實收到您的訂單了！
+      </p>
+
+      <p>
+        我們的果園座落於合歡山西側半山腰上，高海拔的日夜溫差讓甜柿在山風與陽光中慢慢轉紅、累積甜度；每一顆果實都由我們親手採收，再依大小分級、細心包裝裝箱。
+      </p>
+
+      <p>
+        果園內種植次郎、富有、花御所三種經典甜柿，我們在柿子七、八分熟時每日清晨現採，隨機新鮮出貨，恕無法指定單一品種，還請體諒。
+      </p>
+
+      <p>
+        果園目前正依據果實的成熟狀態安排採收，並依訂單順序陸續出貨，出貨當天我們會發送通知給您，請您安心期待，並留意宅配到貨通知。
+      </p>
+
+      <p>
+        希望在您開箱的那一刻，能感受到來自產地的秋天問候。再次謝謝您的等待與支持。
+      </p>
+
+      <p style="margin-top:40px;">
+        祝 平安<br>
+        <strong style="font-size:18px; letter-spacing:2px;">喇當大叔的果園</strong> 敬上
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+
+      <div style="font-size: 14px; color: #666666; line-height: 1.6;">
+        <p style="margin: 0 0 8px 0;">
+        <strong>聯絡資訊：</strong>
+        </p>
+        <p style="margin: 0;">
+          此信件為系統自動發送，若有任何疑問，請私訊
+          <a href="https://www.facebook.com/RatangsFruitFarm" target="_blank" style="color: #1877f2; text-decoration: underline; font-weight: bold;">
+            「喇當大叔的果園」臉書粉絲專頁
+          </a>，並請於私訊時提供<strong>收件人姓名</strong>，謝謝您。
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+`;
+
     var htmlBody_vegetable = `
 <div style="margin:0; padding:0; background-color:#f8f5f0;">
   <div style="max-width:620px; margin:60px auto; padding:0 24px;">
@@ -571,6 +638,8 @@ function sendOrderEmail_HTML(targetEmail, orderId, orderType) {
     var htmlBodyToSend = htmlBody;
     if (orderType === 'peach') {
       htmlBodyToSend = htmlBody_peach;
+    } else if (orderType === 'persimmon') {
+      htmlBodyToSend = htmlBody_persimmon;
     } else if (orderType === 'vegetable') {
       htmlBodyToSend = htmlBody_vegetable;
     } else if (orderType === 'plum' || (orderType && orderType !== '')) {

@@ -18,11 +18,13 @@ const ORDER_SHEET = '訂單';
 const PLUM_ORDER_SHEET = '李子訂單';
 const PEACH_ORDER_SHEET = '水蜜桃訂單';
 const VEGETABLE_ORDER_SHEET = '蔬菜箱訂單';
+const PERSIMMON_ORDER_SHEET = '柿子訂單';
 const CUSTOMER_SHEET = '老客戶';
 const GROCERY_SHEET = '香菇品項';
 const PLUM_GROCERY_SHEET = '李子品項';
 const PEACH_GROCERY_SHEET = '水蜜桃品項';
 const VEGETABLE_GROCERY_SHEET = '蔬菜箱品項';
+const PERSIMMON_GROCERY_SHEET = '柿子品項';
 
 // ────────────────────────────────────────
 // doGet：老客戶查詢
@@ -81,7 +83,8 @@ function doPost(e) {
     const SHEETS_BY_TYPE = {
       plum:      { order: PLUM_ORDER_SHEET,      grocery: PLUM_GROCERY_SHEET },
       peach:     { order: PEACH_ORDER_SHEET,     grocery: PEACH_GROCERY_SHEET },
-      vegetable: { order: VEGETABLE_ORDER_SHEET, grocery: VEGETABLE_GROCERY_SHEET }
+      vegetable: { order: VEGETABLE_ORDER_SHEET, grocery: VEGETABLE_GROCERY_SHEET },
+      persimmon: { order: PERSIMMON_ORDER_SHEET, grocery: PERSIMMON_GROCERY_SHEET }
     };
     const target = SHEETS_BY_TYPE[payload.orderType] || { order: ORDER_SHEET, grocery: GROCERY_SHEET };
     const orderId = 'ORD' + new Date().getTime();
@@ -154,7 +157,7 @@ function doPost(e) {
     // 1. 檢查 Email 格式是否正確
     var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailRegex.test(payload.email)) {
-      // 格式正確，發送 HTML 信件（依 orderType 選擇模板：plum / peach / 預設香菇）
+      // 格式正確，發送 HTML 信件（依 orderType 選擇模板：plum / peach / vegetable / persimmon / 預設香菇）
       sendOrderEmail_HTML(payload.email, orderId, payload.orderType || '');
     }
     else {
