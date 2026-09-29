@@ -201,6 +201,21 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 .ship-sub:first-of-type{margin-top:0}
 .group-notice{display:none}
 .group-notice.show{display:block}
+.grade-link{background:none;border:none;padding:0;margin-left:6px;font-family:inherit;font-size:11.5px;letter-spacing:.5px;color:var(--moss);text-decoration:underline;text-underline-offset:2px;cursor:pointer;white-space:nowrap}
+.grade-link:hover{color:var(--moss-h)}
+.notice .grade-link{margin-left:0;font-size:12.5px;font-weight:700}
+.lightbox{position:fixed;inset:0;z-index:300;background:rgba(20,10,4,.82);display:none;align-items:center;justify-content:center;padding:16px}
+.lightbox.show{display:flex;animation:fadeIn .25s ease}
+.lb-panel{width:100%;max-width:560px;background:var(--paper);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.lb-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+.lb-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:16px;letter-spacing:2px;color:var(--ink)}
+.lb-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1;color:var(--ink-2);cursor:pointer}
+.lb-img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:var(--bg-deep)}
+.lb-cap{padding:10px 16px 4px;font-size:12.5px;color:var(--ink-2);min-height:28px}
+.lb-tabs{display:flex;gap:6px;padding:8px 16px 16px;overflow-x:auto;scrollbar-width:none}
+.lb-tabs::-webkit-scrollbar{display:none}
+.lb-tabs button{flex:0 0 auto;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:'Noto Serif TC',serif;font-weight:700;font-size:13px;color:var(--ink-2);cursor:pointer}
+.lb-tabs button.active{background:var(--moss);border-color:var(--moss);color:#fff}
 </style>
 </head>
 <body>
@@ -252,7 +267,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 </section>
 <section class="products">
 <div class="products-head"><h3>選購</h3><span class="meta">分級裝箱 · 預購優惠</span></div>
-<div class="notice">⚠️ 選購貼心提醒：同一種包裝有不同等級（5A～11A），等級越高單顆越大、粒數越少，下單時請仔細確認需要的規格喔！<br>品種（次郎、富有、花御所）隨機出貨，恕無法指定。</div>
+<div class="notice">⚠️ 選購貼心提醒：同一種包裝有不同等級（5A～11A），等級越高單顆越大、粒數越少，下單時請仔細確認需要的規格喔！<button class="grade-link" onclick="openGrade('5A')">📷 查看 5A～11A 分級圖片</button><br>品種（次郎、富有、花御所）隨機出貨，恕無法指定。</div>
 <div class="notice group-notice" id="groupNotice"></div>
 <div id="productList"><div class="loading"><span class="spinner"></span>商品載入中…</div></div>
 </section>
@@ -392,6 +407,14 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="cart-mid"><div class="label"><span id="cartCount">0</span> items in basket</div><div class="total"><span class="small">NT$</span><span id="cartTotal">0</span></div></div>
 <div class="cart-cta">填寫資料 →</div>
 </div>
+<div class="lightbox" id="gradeBox" onclick="if(event.target===this)closeGrade()">
+<div class="lb-panel">
+<div class="lb-head"><div class="lb-title">甜柿分級 · <span id="lbGrade">5A</span></div><button class="lb-close" onclick="closeGrade()" aria-label="關閉">×</button></div>
+<img class="lb-img" id="lbImg" src="" alt="">
+<div class="lb-cap" id="lbCap"></div>
+<div class="lb-tabs" id="lbTabs"></div>
+</div>
+</div>
 <div class="toast" id="toast">已複製</div>
 <script>
 // TODO: 換成「柿子品項」工作表發佈為 CSV 的網址
@@ -432,7 +455,7 @@ function renderProducts(){
       const priceHtml=base>0?`${hasDisc?'<span class="pre">預購價</span>':''}<span class="num${hasDisc?' sale':''}">${eff.toLocaleString()}</span>${hasDisc?`<span class="orig">NT$${base.toLocaleString()}</span>`:''}`:`<span class="num">洽詢</span>`;
       const count=p.count!==undefined&&p.count!==''?parseInt(p.count):null;
       const soldOut=count!==null&&count===0;
-      return `<div class="variant${(cart[p.id]||0)>0?' in-cart':''}${soldOut?' sold-out':''}" id="variant-${p.id}"><div class="variant-info"><div class="variant-unit">${p.unit}</div>${p.spec?`<div class="variant-spec">${p.spec}</div>`:''}<div class="variant-price"><span class="currency">NT$</span>${priceHtml}</div>${count!==null&&!soldOut?`<div class="stock-count">剩餘 ${count} 份</div>`:''}</div>${soldOut?'<span class="sold-out-label">售罄</span>':stepperHtml(p.id,count)}</div>`;
+      return `<div class="variant${(cart[p.id]||0)>0?' in-cart':''}${soldOut?' sold-out':''}" id="variant-${p.id}"><div class="variant-info"><div class="variant-unit">${p.unit}</div>${p.spec||gradeOf(p)?`<div class="variant-spec">${p.spec||''}${gradeOf(p)?`<button class="grade-link" onclick="openGrade('${gradeOf(p)}')">看分級圖</button>`:''}</div>`:''}<div class="variant-price"><span class="currency">NT$</span>${priceHtml}</div>${count!==null&&!soldOut?`<div class="stock-count">剩餘 ${count} 份</div>`:''}</div>${soldOut?'<span class="sold-out-label">售罄</span>':stepperHtml(p.id,count)}</div>`;
     }).join('');
     const packNote=isGiftPack(first)?`禮盒 ${GROUP_GIFT_MIN} 盒以上有團購優惠價，請私訊我們。`:`箱裝 ${GROUP_BOX_MIN} 箱以上有團購優惠價，請私訊我們。`;
     return `<article class="product-card"><div class="product-img">${imgSrc?`<img src="${imgSrc}" alt="${name}">`:''}<div class="product-img-cap"><div class="cn">${name}</div></div></div>${first.description?`<div class="product-body"><p class="product-desc">${first.description}</p></div>`:''}<div class="variants">${variantsHtml}<div class="pack-note">${packNote}</div></div></article>`;
@@ -456,6 +479,13 @@ function calcFees(){const isPickup=document.getElementById('pickupToggle').check
 function renderConfirm(){const isGift=document.getElementById('giftToggle').checked;const f=calcFees();const deliveryTime=document.getElementById('deliveryTime').value;const get=id=>document.getElementById(id).value.trim();const phone=get('phone'),name=get('buyerName'),email=get('email'),address=get('address'),note=get('note'),recName=get('recipientName'),recPhone=get('recipientPhone');document.getElementById('confirmItems').innerHTML=Object.entries(cart).map(([id,qty])=>{const v=products.find(x=>x.id===id);if(!v)return '';const base=Number(v.price);const eff=effPrice(v);const hasDisc=base>0&&eff<base;const sub=eff*qty;const img=v.picture||'';const priceMeta=hasDisc?`預購價 NT$ ${eff.toLocaleString()} <s style="color:var(--muted)">NT$ ${base.toLocaleString()}</s>`:`NT$ ${eff.toLocaleString()}`;return `<div class="sum-item"><div class="sum-thumb" style="background-image:url('${img}')"></div><div class="sum-mid"><div class="name">${v.name}</div><div class="meta">${v.unit} · ${priceMeta} × ${qty}</div></div><div class="sum-amt">NT$ ${sub.toLocaleString()}</div></div>`;}).join('');document.getElementById('confirmShipRow').style.display=f.isPickup?'none':'';document.getElementById('confirmShip').textContent=f.ship.toLocaleString();document.getElementById('confirmShipMeta').textContent=shippingMeta();document.getElementById('confirmCodRow').style.display=f.cod>0?'':'none';document.getElementById('confirmCod').textContent=f.cod.toLocaleString();document.getElementById('confirmTotal').textContent=f.total.toLocaleString();const rows=[['購買人',name],['電話',phone],['Email',email||'（未填）']];if(f.isPickup){rows.push(['取貨方式','埔里自取']);}else{rows.push(['地址',address]);rows.push(['配送時段',DELIVERY_LABELS[deliveryTime]||'不指定']);}rows.push(['付款方式',f.isPickup?'面交付款':(f.isCod?'貨到付款':'匯款轉帳')]);if(isGift){rows.push(['收件人',recName]);rows.push(['收件電話',recPhone]);}if(note)rows.push(['備註',note]);document.getElementById('confirmInfo').innerHTML=rows.map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('');const needTransfer=!f.isPickup&&!f.isCod;document.getElementById('paymentSection').style.display=needTransfer?'':'none';const noTransfer=document.getElementById('noTransferSection');if(needTransfer){noTransfer.style.display='none';}else{noTransfer.style.display='';document.getElementById('noTransferNote').innerHTML=f.isPickup?'🏡 您選擇<strong>埔里自取</strong>，無需線上匯款與運費，取貨時付款即可。':'💵 您選擇<strong>貨到付款</strong>，無需事先匯款，收到貨時再付款給配送員即可。';}}
 async function submitOrder(){const isGift=document.getElementById('giftToggle').checked;const f=calcFees();const deliveryTime=f.isPickup?'':document.getElementById('deliveryTime').value;const needTransfer=!f.isPickup&&!f.isCod;const t5=document.getElementById('transferLast5').value.trim();const tb=document.getElementById('transferBank').value;if(needTransfer&&!/^\d{5}$/.test(t5)){showErr('transferLast5Err','請填寫 5 位數的末五碼');return;}if(needTransfer&&!tb){showErr('transferBankErr','請選擇匯款銀行');return;}clearErrors();const btn=document.getElementById('btnSubmit');btn.disabled=true;btn.textContent='送出中…';const get=id=>document.getElementById(id).value.trim();const items=Object.entries(cart).map(([id,qty])=>{const p=products.find(x=>x.id===id);const eff=effPrice(p);return{id,name:p.name,unit:p.unit,price:eff,qty,subtotal:eff*qty};});const payload={orderType:'persimmon',buyerName:get('buyerName'),phone:get('phone'),email:get('email'),isGift,recipientName:get('recipientName'),recipientPhone:get('recipientPhone'),address:f.isPickup?'':get('address'),isPickup:f.isPickup,deliveryTime,isCod:f.isCod,codFee:f.cod,note:get('note'),items,shippingFee:f.ship,total:f.total,transferLast5:needTransfer?t5:'',transferBank:needTransfer?tb:'',orderTime:new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})};try{const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});const data=await res.json();if(data.success){document.getElementById('successOrderId').textContent=data.orderId;document.getElementById('successTotal').textContent=f.total.toLocaleString();document.getElementById('successLast5').textContent=t5;document.getElementById('successBank').textContent=tb;document.getElementById('successBankRows').style.display=needTransfer?'':'none';document.getElementById('successLast5Row').style.display=needTransfer?'':'none';document.getElementById('successBankRow').style.display=needTransfer?'':'none';document.getElementById('successPayTitle').textContent=needTransfer?'匯款提醒':'付款提醒';document.getElementById('successPayHead').textContent=f.isPickup?'🏡 埔里自取':(f.isCod?'💵 貨到付款':'🏦 郵局轉帳');document.getElementById('successAmtLabel').textContent=needTransfer?'應匯金額':'應付金額';showPage(4);}else{throw new Error(data.message||'未知錯誤');}}catch(e){alert('訂單送出失敗：'+e.message+'\n\n請截圖或記錄您的商品，並來電或傳訊息給我們。');}finally{btn.disabled=false;btn.textContent='確認送出訂單';}}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>t.classList.remove('show'),1600);}
+// 分級圖：柿子照片/分級/{5A~11A}.jpg，等級由品項 unit 開頭的「5A」等字樣判斷
+const GRADES=['5A','6A','7A','8A','9A','10A','11A'];
+const GRADE_SPEC={'5A':'一顆約 170~205 克（4.5~5.5 兩）','6A':'一顆約 205~240 克（5.5~6.5 兩）','7A':'一顆約 240~280 克（6.5~7.5 兩）','8A':'一顆約 280~320 克（7.5~8.5 兩）','9A':'一顆約 320~355 克（8.5~9.5 兩）','10A':'一顆約 355~390 克（9.5~10.5 兩）','11A':'一顆約 390~430 克（10.5~11.5 兩以上）'};
+function gradeOf(p){const m=String(p.unit||'').match(/(\d+)\s*A/i);const g=m?m[1]+'A':'';return GRADES.includes(g)?g:'';}
+function openGrade(g){document.getElementById('lbGrade').textContent=g;const img=document.getElementById('lbImg');img.src='柿子照片/分級/'+g+'.jpg';img.alt=g+' 分級圖';document.getElementById('lbCap').textContent=GRADE_SPEC[g]||'';document.getElementById('lbTabs').innerHTML=GRADES.map(x=>`<button class="${x===g?'active':''}" onclick="openGrade('${x}')">${x}</button>`).join('');document.getElementById('gradeBox').classList.add('show');}
+function closeGrade(){document.getElementById('gradeBox').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGrade();});
 document.addEventListener('click',e=>{const c=e.target.closest('.copyable');if(c&&navigator.clipboard){navigator.clipboard.writeText(c.dataset.copy);toast('已複製：'+c.dataset.copy);}});
 loadProducts();updateCart();
 </script>
