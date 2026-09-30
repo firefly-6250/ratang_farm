@@ -275,7 +275,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="contact-card">
 <h3>聯繫方式</h3>
 <div class="contact-row"><span class="k">電話</span><span>0978-218-695</span></div>
-<div class="contact-row"><span class="k">私訊聯繫</span><span>FB / IG 搜尋「喇當大叔的果園」</span></div>
+<div class="contact-row"><span class="k">私訊聯繫</span><span><a href="https://www.facebook.com/RatangsFruitFarm" target="_blank" rel="noopener" style="color:var(--ember)">FB 粉專「喇當大叔的果園」</a> / IG 搜尋「喇當大叔的果園」</span></div>
 <div class="contact-note">若果園農忙中無法及時接聽或回覆，還請見諒，請先於粉專留言，我們忙完會第一時間回覆您。</div>
 </div>
 <div class="contact-card">
@@ -286,9 +286,9 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <tr><td>2～3 盒</td><td>200 元</td></tr>
 <tr><td>4 盒</td><td>240 元</td></tr>
 <tr><td>5～6 盒</td><td>400 元</td></tr>
-<tr><td>7 盒以上</td><td>每盒 60 元</td></tr>
+<tr><td>7 盒以上</td><td>每盒 65 元</td></tr>
 </table>
-<div class="contact-note">7 盒 420 元、8 盒 480 元、9 盒 540 元，依此類推。20 盒以上有團購優惠價，請私訊我們。</div>
+<div class="contact-note">7 盒 455 元、8 盒 520 元、9 盒 585 元，依此類推。20 盒以上有團購優惠價，請私訊我們。</div>
 <div class="ship-sub">二層箱裝／三層經濟箱</div>
 <table class="ship-table">
 <tr><td>每箱</td><td>200 元</td></tr>
@@ -422,9 +422,9 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUHwWlvedxxVM-EyoYesMeE1WQkPhPpvVpdtV-T00USZpGl2Vr_5Ve6CTZjQCWBd1rjRYPFlECydpq/pub?gid=1752661386&single=true&output=csv';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwuHTGohw5Hj9MNn2a_HX7SJvh_0l23IYlDwooIJEIB22zPuozOobEBJY0gIw99Ql5b4w/exec';
 // 運費（同一地址計算）：禮盒與箱裝分開計，再相加
-// 禮盒：1 盒 160／2~3 盒 200／4 盒 240／5~6 盒 400／7 盒以上每盒 60
+// 禮盒：1 盒 160／2~3 盒 200／4 盒 240／5~6 盒 400／7 盒以上每盒 65
 // 二層箱、三層經濟箱：每箱 200
-function giftShipping(n){if(n<=0)return 0;if(n===1)return 160;if(n<=3)return 200;if(n===4)return 240;if(n<=6)return 400;return n*60;}
+function giftShipping(n){if(n<=0)return 0;if(n===1)return 160;if(n<=3)return 200;if(n===4)return 240;if(n<=6)return 400;return n*65;}
 const BOX_SHIPPING_EACH=200;
 const COD_FEE_PER_ITEM=30;
 const GROUP_GIFT_MIN=20,GROUP_BOX_MIN=10;
