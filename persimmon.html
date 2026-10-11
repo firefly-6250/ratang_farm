@@ -268,7 +268,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 </section>
 <section class="products">
 <div class="products-head"><h3>選購</h3><span class="meta">分級裝箱 · 預購優惠</span></div>
-<div class="notice">⚠️ 選購貼心提醒：同一種包裝有不同等級（5A～11A），等級越高單顆越大、粒數越少，下單時請仔細確認需要的規格喔！<button class="grade-link" onclick="openGrade('5A')">📷 查看 5A～11A 分級圖片</button><br>品種（次郎、富有、花御所）隨機出貨，恕無法指定。</div>
+<div class="notice">⚠️ 選購貼心提醒：同一種包裝有不同等級（5A～11A），等級越高單顆越大、粒數越少，下單時請仔細確認需要的規格喔！<button class="grade-link" onclick="openGrade('5A')">📷 查看 5A～11A 分級圖片</button><br>品種（次郎、富有、花御所）隨機出貨，恕無法指定。<br>🧪 本季甜柿已送驗農藥殘留（質譜快檢 2026/10/07），檢驗結果合格。<button class="grade-link" onclick="openInspect(0)">📄 查看檢驗報告</button></div>
 <div class="notice group-notice" id="groupNotice"></div>
 <div id="productList"><div class="loading"><span class="spinner"></span>商品載入中…</div></div>
 </section>
@@ -416,6 +416,14 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="lb-tabs" id="lbTabs"></div>
 </div>
 </div>
+<div class="lightbox" id="inspectBox" onclick="if(event.target===this)closeInspect()">
+<div class="lb-panel">
+<div class="lb-head"><div class="lb-title">檢驗報告 · <span id="ibPage">1</span> / 3</div><button class="lb-close" onclick="closeInspect()" aria-label="關閉">×</button></div>
+<a id="ibLink" href="" target="_blank" rel="noopener"><img class="lb-img" id="ibImg" src="" alt=""></a>
+<div class="lb-cap" id="ibCap"></div>
+<div class="lb-tabs" id="ibTabs"></div>
+</div>
+</div>
 <div class="toast" id="toast">已複製</div>
 <script>
 // TODO: 換成「柿子品項」工作表發佈為 CSV 的網址
@@ -486,7 +494,11 @@ const GRADE_SPEC={'5A':'一顆約 170~205 克（4.5~5.5 兩）','6A':'一顆約 
 function gradeOf(p){const m=String(p.unit||'').match(/(\d+)\s*A/i);const g=m?m[1]+'A':'';return GRADES.includes(g)?g:'';}
 function openGrade(g){document.getElementById('lbGrade').textContent=g;const img=document.getElementById('lbImg');img.src='柿子照片/分級/'+g+'.jpg';img.alt=g+' 分級圖';document.getElementById('lbCap').textContent=GRADE_SPEC[g]||'';document.getElementById('lbTabs').innerHTML=GRADES.map(x=>`<button class="${x===g?'active':''}" onclick="openGrade('${x}')">${x}</button>`).join('');document.getElementById('gradeBox').classList.add('show');}
 function closeGrade(){document.getElementById('gradeBox').classList.remove('show');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGrade();});
+// 檢驗報告：柿子照片/檢驗/ 下的報告頁面圖
+const INSPECT_PAGES=[{src:'S__2252836_0.jpg',tab:'檢驗結果',cap:'質譜快檢報告：檢驗結果評定合格'},{src:'S__2252837_0.jpg',tab:'檢出明細',cap:'農藥殘留檢出明細與容許量標準'},{src:'S__2252838_0.jpg',tab:'樣品照片',cap:'送驗樣品照片'}];
+function openInspect(i){const pg=INSPECT_PAGES[i];const src='柿子照片/檢驗/'+pg.src;document.getElementById('ibPage').textContent=i+1;const img=document.getElementById('ibImg');img.src=src;img.alt=pg.cap;document.getElementById('ibLink').href=src;document.getElementById('ibCap').textContent=pg.cap+'（點圖可放大）';document.getElementById('ibTabs').innerHTML=INSPECT_PAGES.map((x,j)=>`<button class="${j===i?'active':''}" onclick="openInspect(${j})">${x.tab}</button>`).join('');document.getElementById('inspectBox').classList.add('show');}
+function closeInspect(){document.getElementById('inspectBox').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGrade();closeInspect();}});
 document.addEventListener('click',e=>{const c=e.target.closest('.copyable');if(c&&navigator.clipboard){navigator.clipboard.writeText(c.dataset.copy);toast('已複製：'+c.dataset.copy);}});
 loadProducts();updateCart();
 </script>
